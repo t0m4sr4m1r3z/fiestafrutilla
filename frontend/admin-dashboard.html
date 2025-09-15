@@ -4,32 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Fiesta de la Frutilla</title>
-    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="/admin-style.css">
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <div id="stats"></div>
-    <script src="admin-config.js"></script>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Dashboard de Administración</h1>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Total de Visitantes</div>
+                <div class="stat-number" id="visitors-count">1,245</div>
+                <div class="stat-label">Este mes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Blogs Publicados</div>
+                <div class="stat-number" id="blogs-count">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Comentarios</div>
+                <div class="stat-number" id="comments-count">0</div>
+                <div class="stat-label">Por moderar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Usuarios</div>
+                <div class="stat-number" id="users-count">0</div>
+                <div class="stat-label">Registrados</div>
+            </div>
+        </div>
+
+        <div class="actions-container">
+            <h2>Acciones Rápidas</h2>
+            <div class="actions-grid">
+                <a href="/admin-blogs.html" class="action-btn">Gestionar Blogs</a>
+                <a href="#" class="action-btn">Gestionar Eventos</a>
+                <a href="#" class="action-btn">Moderar Comentarios</a>
+                <a href="#" class="action-btn">Ver Estadísticas</a>
+                <a href="#" class="action-btn">Configuración</a>
+                <a href="#" class="action-btn">Backup</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h2>Crear Contenido Rápido</h2>
+            <form id="quickBlogForm">
+                <div class="form-group">
+                    <label for="quickTitle">Título del Blog</label>
+                    <input type="text" id="quickTitle" placeholder="Título interesante..." required>
+                </div>
+                <div class="form-group">
+                    <label for="quickContent">Contenido</label>
+                    <textarea id="quickContent" placeholder="Escribe tu contenido aquí..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Publicar Blog Rápido</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/admin-config.js"></script>
     <script>
-        // Cargar datos del dashboard
-        AdminConfig.getDashboardData().then(data => {
-            document.getElementById('stats').innerHTML = `
-                <p>Número de blogs: ${data.blogs}</p>
-            `;
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!checkAuth()) return;
-            
-            // Cargar datos del dashboard
-            loadDashboardData();
-        });
-        
-        async function loadDashboardData() {
-            const data = await AdminConfig.getDashboardData();
-            // Mostrar datos en el dashboard
+        // Verificar autenticación
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            window.location.href = '/admin.html';
         }
-        </script>
+
+        // Cargar estadísticas
+        async function loadStats() {
+            try {
+                // Aquí integrarás con tus funciones reales
+                const stats = {
+                    blogs: 12,
+                    comments: 8,
+                    users: 156,
+                    visitors: 1245
+                };
+
+                document.getElementById('blogs-count').textContent = stats.blogs;
+                document.getElementById('comments-count').textContent = stats.comments;
+                document.getElementById('users-count').textContent = stats.users;
+                document.getElementById('visitors-count').textContent = stats.visitors.toLocaleString();
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        // Formulario rápido de blog
+        document.getElementById('quickBlogForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('quickTitle').value;
+            const content = document.getElementById('quickContent').value;
+
+            if (title && content) {
+                const result = await AdminConfig.createBlog({
+                    titulo: title,
+                    contenido: content,
+                    autor: 'Administrador',
+                    imagen_url: ''
+                });
+
+                if (result.id) {
+                    alert('¡Blog creado exitosamente!');
+                    document.getElementById('quickBlogForm').reset();
+                    loadStats();
+                } else {
+                    alert('Error: ' + (result.error || 'Error al crear blog'));
+                }
+            }
+        });
+
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
 </body>
 </html>

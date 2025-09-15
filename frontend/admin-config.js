@@ -65,6 +65,8 @@ class AdminConfig {
         }
     }
 
+
+    
     static async updateBlog(id, blogData) {
         try {
             const token = localStorage.getItem('adminToken');

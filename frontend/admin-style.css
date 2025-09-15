@@ -1,130 +1,258 @@
-/* Estilos para el panel de administración */
+/* Estilos generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Login */
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: 100px auto;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+/* Dashboard */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  color: #333;
+  margin: 0;
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.logout-btn:hover {
+  background: #c82333;
+}
+
+/* Stats */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #667eea;
+  margin: 0.5rem 0;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Actions */
+.actions-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.action-btn {
+  background: #667eea;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Forms */
+.form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-primary:hover {
+  background: #5a67d8;
+}
+
+/* Blog List */
+.blog-list {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.blog-item {
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blog-item:last-child {
+  border-bottom: none;
+}
+
+.blog-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.blog-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.blog-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-edit {
+  background: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+      padding: 1rem;
   }
   
-  .admin-header {
-    background: linear-gradient(135deg, #d32f2f 0%, #388e3c 100%);
-    color: white;
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .admin-header h1 {
-    margin: 0;
-    font-size: 2.2rem;
-  }
-  
-  .admin-header p {
-    margin: 0.5rem 0 0;
-    opacity: 0.9;
-  }
-  
-  .admin-guide {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-  
-  .admin-guide h2 {
-    text-align: center;
-    color: #388e3c;
-    margin-bottom: 2rem;
-    font-size: 1.8rem;
-  }
-  
-  .guide-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .guide-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .guide-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .guide-card h3 {
-    color: #d32f2f;
-    margin-top: 0;
-    font-size: 1.2rem;
-  }
-  
-  .guide-card p {
-    color: #555;
-    font-size: 0.95rem;
-  }
-  
-  /* Estilos para el CMS */
-  #nc-root {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .admin-header h1 {
-      font-size: 1.8rem;
-    }
-    
-    .guide-grid {
+  .stats-container {
       grid-template-columns: 1fr;
-    }
   }
   
-  /* Personalización del CMS */
-  .nc-root {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  .actions-grid {
+      grid-template-columns: 1fr;
   }
   
-  .nc-widgetButton {
-    background-color: #d32f2f !important;
+  .header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
   }
-  
-  .nc-widgetButton:hover {
-    background-color: #b71c1c !important;
-  }
-  
-  .nc-imageWidget-button {
-    background-color: #388e3c !important;
-  }
-  
-  .nc-imageWidget-button:hover {
-    background-color: #2e7d32 !important;
-  }
-  
-  .nc-markdownWidget-toolbarButton {
-    color: #388e3c !important;
-  }
-  
-  .nc-markdownWidget-toolbarButton:hover {
-    color: #2e7d32 !important;
-  }
-  
-  .nc-objectWidget-cardHeader {
-    background-color: #f5f5f5 !important;
-    border-bottom: 1px solid #e0e0e0 !important;
-  }
-  
-  .nc-relationControl-button {
-    background-color: #388e3c !important;
-  }
-  
-  .nc-relationControl-button:hover {
-    background-color: #2e7d32 !important;
-  }
+}
