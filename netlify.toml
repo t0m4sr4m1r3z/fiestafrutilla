@@ -1,10 +1,21 @@
 [build]
   publish = "frontend"
+  command = "cd backend-admins && npm install"
 
 [functions]
   directory = "backend-admins/functions"
 
 [[redirects]]
-  from = "/admin/*"
-  to = "/backend-admins/admin.html"
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin-dashboard"
+  to = "/admin-dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin-blogs"
+  to = "/admin-blogs.html"
   status = 200
