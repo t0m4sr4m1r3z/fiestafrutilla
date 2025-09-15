@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Blogs - Fiesta de la Frutilla</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <style>
+        .blogs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .blog-form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .blog-list {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .blog-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="blogs-container">
+        <h1>Gestión de Blogs</h1>
+        
+        <div class="blog-form">
+            <h2>Crear Nuevo Blog</h2>
+            <form id="createBlogForm">
+                <input type="text" id="blogTitulo" placeholder="Título" required>
+                <textarea id="blogContenido" placeholder="Contenido" rows="6" required></textarea>
+                <input type="text" id="blogAutor" placeholder="Autor" required>
+                <input type="text" id="blogImagen" placeholder="URL de la imagen">
+                <button type="submit">Publicar Blog</button>
+            </form>
+        </div>
+
+        <div class="blog-list">
+            <h2>Blogs Existentes</h2>
+            <div id="blogsList"></div>
+        </div>
+    </div>
+
+    <script src="admin-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = '/admin.html';
+                return;
+            }
+
+            // Cargar blogs existentes
+            await loadBlogs();
+
+            // Formulario para crear blog
+            document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const blogData = {
+                    titulo: document.getElementById('blogTitulo').value,
+                    contenido: document.getElementById('blogContenido').value,
+                    autor: document.getElementById('blogAutor').value,
+                    imagen_url: document.getElementById('blogImagen').value
+                };
+
+                const result = await AdminConfig.createBlog(blogData);
+                if (result.id) {
+                    alert('Blog creado exitosamente!');
+                    document.getElementById('createBlogForm').reset();
+                    await loadBlogs();
+                } else {
+                    alert('Error: ' + (result.error || 'Error desconocido'));
+                }
+            });
+        });
+
+        async function loadBlogs() {
+            const blogs = await AdminConfig.getBlogs();
+            const blogsList = document.getElementById('blogsList');
+            
+            if (Array.isArray(blogs)) {
+                blogsList.innerHTML = blogs.map(blog => `
+                    <div class="blog-item">
+                        <h3>${blog.titulo}</h3>
+                        <p><strong>Autor:</strong> ${blog.autor}</p>
+                        <p><strong>Fecha:</strong> ${new Date(blog.fecha_publicacion).toLocaleDateString()}</p>
+                        <button onclick="deleteBlog(${blog.id})">Eliminar</button>
+                    </div>
+                `).join('');
+            } else {
+                blogsList.innerHTML = '<p>Error cargando blogs</p>';
+            }
+        }
+
+        async function deleteBlog(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar este blog?')) {
+                const result = await AdminConfig.deleteBlog(id);
+                if (result.message) {
+                    alert('Blog eliminado');
+                    await loadBlogs();
+                } else {
+                    alert('Error eliminando blog');
+                }
+            }
+        }
+    </script>
+    <button onclick="logout()">Cerrar Sesión</button>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!checkAuth()) return;
+        
+        // Cargar blogs
+        loadBlogs();
+    });
+    </script>
+</body>
+</html>

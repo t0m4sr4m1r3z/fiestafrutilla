@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiesta Provincial de la Frutilla - Desmochado, Corrientes</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .notification.success {
+            background-color: #388e3c;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .notification.error {
+            background-color: #d32f2f;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .form-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .form-status.success {
+            background-color: rgba(56, 142, 60, 0.1);
+            border: 1px solid #388e3c;
+            color: #1b5e20;
+            display: block;
+        }
+        
+        .form-status.error {
+            background-color: rgba(211, 47, 47, 0.1);
+            border: 1px solid #d32f2f;
+            color: #b71c1c;
+            display: block;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Estilo para el botón de diagnóstico */
+        #debug-btn {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            z-index: 1000;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-strawberry fa-2x"></i>
+                <h1>Fiesta de la Frutilla</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#historia">Historia</a></li>
+                    <li><a href="#acerca">Acerca de</a></li>
+                    <li><a href="#ubicacion">Ubicación</a></li>
+                    <li><a href="#compra">Comprar Frutillas</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <h2>Fiesta Provincial de la Frutilla</h2>
+            <p>Celebramos la cultura y tradición de Desmochado, Corrientes, en honor a la deliciosa frutilla que caracteriza nuestra región.</p>
+            <a href="#acerca" class="btn">Conoce más</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="acerca">
+        <div class="container">
+            <div class="section-title">
+                <h2>La Fiesta de la Frutilla</h2>
+                <p>Un evento que celebra la tradición frutillera de Desmochado</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <p>La "Fiesta de la Frutilla" es un evento que se celebra anualmente en el paraje Desmochado, ubicado en Bella Vista, Corrientes, y honra a los productores de esta fruta. La festividad incluye concursos de cosecha y despalillado, la elección de la Reina de la Frutilla, agasajos gastronómicos, y espectáculos musicales. Es una celebración clave para el desarrollo turístico y económico de la zona, que es considerada la región de mayor producción de frutillas del Nordeste argentino.</p>
+                    
+                    <h3>¿Cuándo se realiza?</h3>
+                    <p>La fiesta se lleva a cabo a principios de octubre, coincidiendo con la época pico de producción y cosecha de la frutilla.</p>
+                    
+                    <h3>¿Qué se hace en la fiesta?</h3>
+                    <ul>
+                        <li><strong>Concursos:</strong> Se realizan competencias de cosecheros (quienes cosechan más en un tiempo determinado) y despalilladores (quienes quitan el tallo de las frutillas más rápidamente).</li>
+                        <li><strong>Elección de la Reina:</strong> Se elige a la representante de la festividad.</li>
+                        <li><strong>Espectáculos y Gastronomía:</strong> Hay música, se presentan diversos grupos y se ofrece comida basada en la frutilla.</li>
+                        <li><strong>Homenaje a los productores:</strong> La fiesta es un reconocimiento al trabajo diario de los productores y la gran cantidad de personas que participan en el ciclo de la fruta.</li>
+                    </ul>
+                    
+                    <h3>¿Por qué es importante para la región?</h3>
+                    <ul>
+                        <li><strong>Reconocimiento a la producción:</strong> Es un tributo a la principal actividad productiva de Desmochado, que es la frutilla.</li>
+                        <li><strong>Desarrollo turístico:</strong> El evento atrae visitantes y ayuda a promocionar Bella Vista y Desmochado como destinos turísticos.</li>
+                        <li><strong>Cultura e identidad:</strong> La fiesta refuerza la identidad cultural de la zona, conectando a la comunidad con sus tradiciones productivas.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="historia">
+        <div class="container">
+            <div class="section-title">
+                <h2>Ediciones Anteriores</h2>
+            </div>
+
+            <div class="year-filter">
+                <button class="filter-btn active" data-year="all">Todos</button>
+                <button class="filter-btn" data-year="2024">2024</button>
+                <button class="filter-btn" data-year="2023">2023</button>
+                <button class="filter-btn" data-year="2022">2022</button>
+            </div>
+
+            <div class="blog-grid">
+                <!-- Blog 2024 -->
+                <article class="blog-card" data-year="2024">
+                    <div class="blog-image">
+                        <img src="https://images.unsplash.com/photo-1464454709131-ffd692591ee5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80" alt="Fiesta de la Frutilla 2024">
+                    </div>
+                    <div class="blog-content">
+                        <h3>2024 - 3° Fiesta Provincial</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 11-12 Octubre</span>
+                        </div>
+                        <p>La tercera edición de nuestra fiesta contó con concursos, shows en vivo y la participación récord de productores locales.</p>
+                        <a href="blogs/blog-2024.html" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Blog 2023 -->
+                <article class="blog-card" data-year="2023">
+                    <div class="blog-image">
+                        <img src="frutillas2.jpg" alt="Fiesta de la Frutilla 2023">
+                    </div>
+                    <div class="blog-content">
+                        <h3>2023 - 2° Fiesta Provincial</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 13-14 Octubre</span>
+                        </div>
+                        <p>La segunda edición consolidó el evento como referente provincial, con más expositores y actividades para toda la familia.</p>
+                        <a href="blogs/blog-2023.html" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Blog 2022 -->
+                <article class="blog-card" data-year="2022">
+                    <div class="blog-image">
+                        <img src="frutillas3.jfif" alt="Fiesta de la Frutilla 2022">
+                    </div>
+                    <div class="blog-content">
+                        <h3>2022 - 1° Fiesta Provincial</h3>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> 15-16 Octubre</span>
+                        </div>
+                        <p>La primera edición que marcó el inicio de esta tradición, reuniendo a los productores de frutillas de la región.</p>
+                        <a href="blogs/blog-2022.html" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ubicación Section -->
+    <section id="ubicacion" class="location-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>¿Cómo llegar a Desmochado?</h2>
+                <p>Ubicación de la capital correntina de la frutilla</p>
+            </div>
+
+            <div class="location-content">
+                <div class="location-info">
+                    <h3>Desmochado, Bella Vista - Corrientes</h3>
+                    <p>Desmochado es un paraje rural ubicado en el departamento de Bella Vista, provincia de Corrientes, Argentina. Es reconocido como la principal zona productora de frutillas de la región noreste del país.</p>
+                    
+                    <div class="location-details">
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Ubicación</h4>
+                                <p>A 15 km de la ciudad de Bella Vista, Corrientes</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-road"></i>
+                            <div>
+                                <h4>Accesos</h4>
+                                <p>Ruta Provincial 27 y caminos rurales</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-car"></i>
+                            <div>
+                                <h4>Desde Corrientes Capital</h4>
+                                <p>Aproximadamente 120 km (1h 45min)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-bus"></i>
+                            <div>
+                                <h4>Transporte</h4>
+                                <p>Servicios de colectivos hasta Bella Vista y luego transporte local</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="map-container">
+                    <div class="map-wrapper">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14220.435915996848!2d-58.88372283476563!3d-28.68559999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9450c16c982d536d%3A0x5b4b8b38f6c2c0b0!2sDesmochado%2C%20Corrientes!5e0!3m2!1ses!2sar!4v1663801399683!5m2!1ses!2sar" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purchase Section -->
+    <section id="compra" class="purchase-section">
+        <div class="container">
+            <div class="section-title">
+                <h2 style="color: white;">Adquiere Nuestras Frutillas</h2>
+            </div>
+
+            <div class="purchase-container">
+                <div class="purchase-info">
+                    <h2>Frutillas Frescas de Desmochado</h2>
+                    <p>Lleva a tu hogar el sauténtico sabor de Corrientes con nuestras frutillas recién cosechadas, seleccionadas cuidadosamente para garantizar la mejor calidad.</p>
+                    
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Producto 100% fresco y natural</li>
+                        <li><i class="fas fa-check-circle"></i> Cosechado el mismo día del envío</li>
+                        <li><i class="fas fa-check-circle"></i> Envío a domicilio en cajones de 5kg</li>
+                        <li><i class="fas fa-check-circle"></i> Pago seguro contra entrega</li>
+                    </ul>
+                    
+                    <p><strong>Precio especial: $15.000 por cajón</strong></p>
+                </div>
+
+                <div class="purchase-form">
+                    <h3>Formulario de Pedido</h3>
+                    <div id="form-status" class="form-status"></div> 
+                    <form id="order-form">
+                        <div class="form-group">
+                            <label for="name">Nombre completo *</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Correo electrónico *</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Teléfono *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Cantidad de cajones *</label>
+                            <input type="number" id="quantity" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Dirección de entrega *</label>
+                            <textarea id="address" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Instrucciones especiales</label>
+                            <textarea id="notes" rows="2"></textarea>
+                        </div>
+                        <button type="submit" id="submit-btn" class="submit-btn">
+                            <span id="btn-text">Realizar Pedido</span>
+                            <span id="btn-loading" class="loading" style="display: none;"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Fiesta de la Frutilla</h3>
+                    <p>Celebrando las tradiciones y la producción de frutillas de Desmochado, Corrientes, Argentina.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="#inicio"><i class="fas fa-arrow-right"></i> Inicio</a></li>
+                        <li><a href="#historia"><i class="fas fa-arrow-right"></i> Historia</a></li>
+                        <li><a href="#acerca"><i class="fas fa-arrow-right"></i> Acerca de</a></li>
+                        <li><a href="#ubicacion"><i class="fas fa-arrow-right"></i> Ubicación</a></li>
+                        <li><a href="#compra"><i class="fas fa-arrow-right"></i> Comprar Frutillas</a></li>
+                        <li><a href="#contacto"><i class="fas fa-arrow-right"></i> Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Desmochado, Bella Vista, Corrientes</a></li>
+                        <li><a href="tel:+543794123456"><i class="fas fa-phone"></i> +54 3794-123456</a></li>
+                        <li><a href="mailto:info@fiestafrutilla.com"><i class="fas fa-envelope"></i> info@fiestafrutilla.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Fiesta Provincial de la Frutilla - Desmochado, Corrientes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <div id="notification" class="notification"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // URL de tu backend
+        const API_URL = 'https://fiesta-frutilla-backend.onrender.com';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Página cargada, verificando conexión con backend...');
+            
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('nav ul');
+            const body = document.body;
+            
+            // Crear overlay para el menú
+            const overlay = document.createElement('div');
+            overlay.className = 'menu-overlay';
+            document.body.appendChild(overlay);
+            
+            // Función para abrir el menú
+            function openMenu() {
+                navMenu.classList.add('show');
+                overlay.classList.add('active');
+                body.style.overflow = 'hidden';
+            }
+            
+            // Función para cerrar el menú
+            function closeMenu() {
+                navMenu.classList.remove('show');
+                overlay.classList.remove('active');
+                body.style.overflow = '';
+            }
+            
+            // Toggle menu al hacer clic en el botón
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (navMenu.classList.contains('show')) {
+                        closeMenu();
+                    } else {
+                        openMenu();
+                    }
+                });
+            }
+            
+            // Cerrar menú al hacer clic en overlay
+            overlay.addEventListener('click', closeMenu);
+            
+            // Cerrar menú al hacer clic en un enlace
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+            
+            // Cerrar menú al redimensionar la ventana
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeMenu();
+                }
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        history.pushState(null, null, targetId);
+                    }
+                });
+            });
+            
+            // FUNCIÓN MEJORADA PARA ENVIAR PEDIDOS
+            const orderForm = document.getElementById('order-form');
+            if (orderForm) {
+                orderForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    console.log('🔄 Iniciando envío de formulario...');
+                    
+                    // Obtener elementos del DOM
+                    const btnText = document.getElementById('btn-text');
+                    const btnLoading = document.getElementById('btn-loading');
+                    const submitBtn = document.getElementById('submit-btn');
+                    
+                    // Mostrar estado de carga
+                    if (btnText && btnLoading) {
+                        btnText.style.display = 'none';
+                        btnLoading.style.display = 'inline-block';
+                    }
+                    submitBtn.disabled = true;
+                    
+                    // Obtener valores del formulario
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const quantity = document.getElementById('quantity').value;
+                    const address = document.getElementById('address').value;
+                    const notes = document.getElementById('notes').value;
+                    
+                    // Validación
+                    if (!name || !email || !phone || !quantity || quantity < 1 || !address) {
+                        alert('Por favor, completa todos los campos obligatorios.');
+                        
+                        // Restaurar estado del botón
+                        if (btnText && btnLoading) {
+                            btnText.style.display = 'inline-block';
+                            btnLoading.style.display = 'none';
+                        }
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                    
+                    try {
+                        // Crear objeto con los datos del pedido
+                        const pedido = {
+                            nombre: name,
+                            email: email,
+                            telefono: phone,
+                            cantidad: parseInt(quantity),
+                            direccion: address,
+                            notas: notes || 'Sin notas adicionales',
+                            fecha: new Date().toISOString(),
+                            estado: 'pendiente'
+                        };
+                        
+                        console.log('📤 Enviando pedido:', pedido);
+                        
+                        // Enviar a la base de datos
+                        const response = await fetch(`${API_URL}/pedidos`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(pedido)
+                        });
+                        
+                        console.log('📥 Respuesta del servidor:', response.status);
+                        
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            console.log('✅ Pedido exitoso:', responseData);
+                            
+                            // Mostrar mensaje de éxito
+                            alert('¡Pedido realizado con éxito! Te contactaremos pronto.');
+                            
+                            // Resetear formulario
+                            orderForm.reset();
+                            
+                        } else {
+                            console.error('❌ Error en respuesta:', response.status, response.statusText);
+                            throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                        }
+                    } catch (error) {
+                        console.error('❌ Error enviando pedido:', error);
+                        alert('Error al enviar el pedido. Por favor, intenta nuevamente. Detalle: ' + error.message);
+                    } finally {
+                        // Restaurar estado del botón
+                        if (btnText && btnLoading) {
+                            btnText.style.display = 'inline-block';
+                            btnLoading.style.display = 'none';
+                        }
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+    </script>
+</body>
+</html>

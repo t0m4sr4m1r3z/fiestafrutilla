@@ -1,0 +1,10 @@
+[build]
+  publish = "frontend"
+
+[functions]
+  directory = "backend-admins/functions"
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/backend-admins/admin.html"
+  status = 200
