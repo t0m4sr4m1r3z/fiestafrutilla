@@ -5,26 +5,35 @@ exports.handler = async (event, context) => {
   // Verificar autenticación
   const authHeader = event.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { statusCode: 401, body: 'No autorizado' };
+    return {
+      statusCode: 401,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'No autorizado' })
+    };
   }
 
-  const token = authHeader.split(' ')[1];
-  
   try {
-    jwt.verify(token, process.env.ADMIN_SECRET || 'fallback-secret');
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ADMIN_SECRET);
   } catch (error) {
-    return { statusCode: 401, body: 'Token inválido' };
+    return {
+      statusCode: 401,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Token inválido' })
+    };
   }
 
-  // Aquí implementarías la lógica para subir imágenes
-  // Puedes usar servicios como Cloudinary, AWS S3, o almacenar en Neon
-  // Por ahora, retornamos un URL ficticio
-
+  // Para subida real de imágenes, usarías un servicio como Cloudinary o S3
+  // Por ahora, simulamos la subida y retornamos una URL ficticia
+  
+  const { imageUrl } = JSON.parse(event.body);
+  
   return {
     statusCode: 200,
+    headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
     body: JSON.stringify({
       success: true,
-      imageUrl: 'https://ejemplo.com/imagen-subida.jpg'
+      imageUrl: imageUrl || 'https://via.placeholder.com/800x400?text=Imagen+del+Blog'
     })
   };
 };

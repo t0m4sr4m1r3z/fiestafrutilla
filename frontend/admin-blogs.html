@@ -31,10 +31,21 @@
                     <label for="blogAutor">Autor</label>
                     <input type="text" id="blogAutor" placeholder="Nombre del autor" required>
                 </div>
-                <div class="form-group">
-                    <label for="blogImagen">URL de la Imagen (opcional)</label>
-                    <input type="url" id="blogImagen" placeholder="https://ejemplo.com/imagen.jpg">
-                </div>
+<div class="form-group">
+    <label for="blogImagen">Imagen del Blog</label>
+    <input type="file" id="blogImageFile" accept="image/*" style="display: none;">
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" onclick="document.getElementById('blogImageFile').click()" 
+                style="padding: 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Seleccionar Imagen
+        </button>
+        <span id="fileName" style="color: #666;">Ninguna imagen seleccionada</span>
+    </div>
+    <div id="imagePreview" style="margin-top: 10px; display: none;">
+        <img id="previewImg" style="max-width: 200px; max-height: 150px; border-radius: 5px;">
+    </div>
+    <input type="hidden" id="blogImagen">
+</div>
                 <button type="submit" class="btn-primary">Publicar Blog</button>
             </form>
         </div>
@@ -129,6 +140,83 @@
 
         // Cargar blogs al iniciar
         document.addEventListener('DOMContentLoaded', loadBlogs);
+
+   let selectedImageFile = null;
+    
+    document.getElementById('blogImageFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            selectedImageFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            
+            // Mostrar preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').style.display = 'block';
+                document.getElementById('previewImg').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Función para subir imagen
+    async function uploadImage(file) {
+        try {
+            const token = localStorage.getItem('adminToken');
+            
+            // Simulamos la subida - en producción aquí subirías a Cloudinary/S3
+            const fakeImageUrl = `https://via.placeholder.com/800x400?text=${encodeURIComponent(file.name)}`;
+            
+            const response = await fetch(`${API_BASE}/upload-image`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ imageUrl: fakeImageUrl })
+            });
+            
+            const result = await response.json();
+            return result.imageUrl;
+        } catch (error) {
+            console.error('Error subiendo imagen:', error);
+            return null;
+        }
+    }
+    
+    // Modificar el submit del formulario para manejar imágenes
+    document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        let imageUrl = document.getElementById('blogImagen').value;
+        
+        // Si hay una imagen seleccionada, subirla
+        if (selectedImageFile) {
+            const uploadedUrl = await uploadImage(selectedImageFile);
+            if (uploadedUrl) {
+                imageUrl = uploadedUrl;
+            }
+        }
+        
+        const blogData = {
+            titulo: document.getElementById('blogTitulo').value,
+            contenido: document.getElementById('blogContenido').value,
+            autor: document.getElementById('blogAutor').value,
+            imagen_url: imageUrl
+        };
+    
+        const result = await AdminConfig.createBlog(blogData);
+        if (result.id) {
+            alert('¡Blog creado exitosamente!');
+            document.getElementById('createBlogForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            selectedImageFile = null;
+            await loadBlogs();
+        } else {
+            alert('Error: ' + (result.error || 'Error al crear blog'));
+        }
+    });
     </script>
+   
 </body>
 </html>

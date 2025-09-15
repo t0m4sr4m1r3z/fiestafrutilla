@@ -151,6 +151,59 @@
         </div>
     </section>
 
+    <!-- Agrega esto donde quieras mostrar los blogs -->
+<section id="blogs-section" style="padding: 40px 0; background: #f8f9fa;">
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 30px;">Últimos Blogs</h2>
+        <div id="blogs-container" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+            <!-- Los blogs se cargarán aquí dinámicamente -->
+        </div>
+    </div>
+</section>
+
+<script>
+// Cargar blogs al iniciar la página
+async function loadBlogs() {
+    try {
+        const response = await fetch('/.netlify/functions/get-blogs');
+        const blogs = await response.json();
+        
+        const container = document.getElementById('blogs-container');
+        
+        if (blogs.length > 0) {
+            container.innerHTML = blogs.map(blog => `
+                <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    ${blog.imagen_url ? `
+                        <img src="${blog.imagen_url}" alt="${blog.titulo}" 
+                             style="width: 100%; height: 200px; object-fit: cover;">
+                    ` : ''}
+                    <div style="padding: 20px;">
+                        <h3 style="margin: 0 0 10px 0; color: #333;">${blog.titulo}</h3>
+                        <p style="color: #666; margin: 0 0 15px 0; line-height: 1.5;">
+                            ${blog.contenido.substring(0, 100)}...
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #888; font-size: 0.9em;">Por: ${blog.autor}</span>
+                            <span style="color: #888; font-size: 0.9em;">
+                                ${new Date(blog.fecha_publicacion).toLocaleDateString()}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p style="text-align: center; color: #666;">No hay blogs publicados todavía.</p>';
+        }
+    } catch (error) {
+        console.error('Error cargando blogs:', error);
+        document.getElementById('blogs-container').innerHTML = '<p style="text-align: center; color: #666;">Error cargando blogs.</p>';
+    }
+}
+
+// Cargar blogs cuando la página se cargue
+document.addEventListener('DOMContentLoaded', loadBlogs);
+</script>
+
     <!-- Blog Section -->
     <section id="historia">
         <div class="container">
