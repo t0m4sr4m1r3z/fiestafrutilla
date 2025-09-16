@@ -81,6 +81,175 @@
             cursor: pointer;
             font-size: 12px;
         }
+
+        /* Estilos profesionales para blogs tipo Bella Vista */
+        .blogs-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .blogs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .blog-content {
+            padding: 25px;
+        }
+
+        .blog-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .blog-excerpt {
+            color: #718096;
+            line-height: 1.6;
+            margin: 0 0 20px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        .blog-author {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .blog-date {
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+
+        .read-more {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .read-more:hover {
+            background: #5a67d8;
+        }
+
+        /* Header estilizado para blogs */
+        .blogs-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .blogs-header h2 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+        }
+
+        .blogs-header p {
+            font-size: 1.1rem;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .blogs-container {
+                grid-template-columns: 1fr;
+                padding: 0 15px;
+            }
+            
+            .blogs-header h2 {
+                font-size: 2rem;
+            }
+            
+            .blog-content {
+                padding: 20px;
+            }
+        }
+
+        /* Efecto de carga */
+        .blog-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Badge para nuevos blogs */
+        .new-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #48bb78;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
     </style>
 </head>
 
@@ -151,135 +320,18 @@
         </div>
     </section>
 
-    <!-- Agrega esto donde quieras mostrar los blogs -->
-<section id="blogs-section" style="padding: 40px 0; background: #f8f9fa;">
-    <div class="container">
-        <h2 style="text-align: center; margin-bottom: 30px;">Últimos Blogs</h2>
-        <div id="blogs-container" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+    <!-- Sección de Blogs -->
+    <section class="blogs-section">
+        <div class="blogs-header">
+            <h2>Últimas Noticias</h2>
+            <p>Mantente informado sobre los eventos y novedades de la Fiesta de la Frutilla</p>
+        </div>
+        
+        <div class="blogs-container" id="blogs-container">
             <!-- Los blogs se cargarán aquí dinámicamente -->
-        </div>
-    </div>
-</section>
-
-<script>
-// Cargar blogs al iniciar la página
-async function loadBlogs() {
-    try {
-        const response = await fetch('/.netlify/functions/get-blogs');
-        const blogs = await response.json();
-        
-        const container = document.getElementById('blogs-container');
-        
-        if (blogs.length > 0) {
-            container.innerHTML = blogs.map(blog => `
-                <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                    ${blog.imagen_url ? `
-                        <img src="${blog.imagen_url}" alt="${blog.titulo}" 
-                             style="width: 100%; height: 200px; object-fit: cover;">
-                    ` : ''}
-                    <div style="padding: 20px;">
-                        <h3 style="margin: 0 0 10px 0; color: #333;">${blog.titulo}</h3>
-                        <p style="color: #666; margin: 0 0 15px 0; line-height: 1.5;">
-                            ${blog.contenido.substring(0, 100)}...
-                        </p>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #888; font-size: 0.9em;">Por: ${blog.autor}</span>
-                            <span style="color: #888; font-size: 0.9em;">
-                                ${new Date(blog.fecha_publicacion).toLocaleDateString()}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            container.innerHTML = '<p style="text-align: center; color: #666;">No hay blogs publicados todavía.</p>';
-        }
-    } catch (error) {
-        console.error('Error cargando blogs:', error);
-        document.getElementById('blogs-container').innerHTML = '<p style="text-align: center; color: #666;">Error cargando blogs.</p>';
-    }
-}
-
-// Cargar blogs cuando la página se cargue
-document.addEventListener('DOMContentLoaded', loadBlogs);
-</script>
-
-   <!-- Sección de Blogs -->
-<section class="blogs-section">
-    <div class="blogs-header">
-        <h2>Últimas Noticias</h2>
-        <p>Mantente informado sobre los eventos y novedades de la Fiesta de la Frutilla</p>
-    </div>
-    
-    <div class="blogs-container" id="blogs-container">
-        <!-- Los blogs se cargarán aquí dinámicamente -->
-        <div class="blog-card" style="text-align: center; padding: 40px;">
-            <div class="loading-spinner"></div>
-            <p>Cargando noticias...</p>
-        </div>
-    </div>
-</section>
-
-<style>
-.loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-</style>
-                <!-- Blog 2024 -->
-                <article class="blog-card" data-year="2024">
-                    <div class="blog-image">
-                        <img src="https://images.unsplash.com/photo-1464454709131-ffd692591ee5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80" alt="Fiesta de la Frutilla 2024">
-                    </div>
-                    <div class="blog-content">
-                        <h3>2024 - 3° Fiesta Provincial</h3>
-                        <div class="blog-meta">
-                            <span><i class="far fa-calendar"></i> 11-12 Octubre</span>
-                        </div>
-                        <p>La tercera edición de nuestra fiesta contó con concursos, shows en vivo y la participación récord de productores locales.</p>
-                        <a href="blogs/blog-2024.html" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-
-                <!-- Blog 2023 -->
-                <article class="blog-card" data-year="2023">
-                    <div class="blog-image">
-                        <img src="frutillas2.jpg" alt="Fiesta de la Frutilla 2023">
-                    </div>
-                    <div class="blog-content">
-                        <h3>2023 - 2° Fiesta Provincial</h3>
-                        <div class="blog-meta">
-                            <span><i class="far fa-calendar"></i> 13-14 Octubre</span>
-                        </div>
-                        <p>La segunda edición consolidó el evento como referente provincial, con más expositores y actividades para toda la familia.</p>
-                        <a href="blogs/blog-2023.html" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-
-                <!-- Blog 2022 -->
-                <article class="blog-card" data-year="2022">
-                    <div class="blog-image">
-                        <img src="frutillas3.jfif" alt="Fiesta de la Frutilla 2022">
-                    </div>
-                    <div class="blog-content">
-                        <h3>2022 - 1° Fiesta Provincial</h3>
-                        <div class="blog-meta">
-                            <span><i class="far fa-calendar"></i> 15-16 Octubre</span>
-                        </div>
-                        <p>La primera edición que marcó el inicio de esta tradición, reuniendo a los productores de frutillas de la región.</p>
-                        <a href="blogs/blog-2022.html" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
+            <div class="blog-card" style="text-align: center; padding: 40px;">
+                <div class="loading-spinner"></div>
+                <p>Cargando noticias...</p>
             </div>
         </div>
     </section>
@@ -440,78 +492,82 @@ document.addEventListener('DOMContentLoaded', loadBlogs);
             </div>
         </div>
     </footer>
+    
     <div id="notification" class="notification"></div>
-    async function loadBlogs() {
-        try {
-            const response = await fetch('/.netlify/functions/get-blogs');
-            const blogs = await response.json();
-            
-            const container = document.getElementById('blogs-container');
-            
-            if (blogs && blogs.length > 0) {
-                container.innerHTML = blogs.map((blog, index) => {
-                    const isNew = isBlogNew(blog.fecha_publicacion);
-                    const imageUrl = blog.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
-                    
-                    return `
-                        <div class="blog-card">
-                            ${isNew ? '<span class="new-badge">NUEVO</span>' : ''}
-                            <img src="${imageUrl}" alt="${blog.titulo}" class="blog-image">
-                            <div class="blog-content">
-                                <h3 class="blog-title">${blog.titulo}</h3>
-                                <p class="blog-excerpt">${blog.contenido.substring(0, 120)}...</p>
-                                <a href="#" class="read-more">Leer más</a>
-                                <div class="blog-meta">
-                                    <span class="blog-author">Por: ${blog.autor}</span>
-                                    <span class="blog-date">${formatDate(blog.fecha_publicacion)}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                container.innerHTML = `
-                    <div class="blog-card" style="text-align: center; padding: 40px;">
-                        <h3 style="color: #718096; margin-bottom: 15px;">No hay noticias aún</h3>
-                        <p style="color: #a0aec0;">Pronto publicaremos las últimas novedades de la Fiesta de la Frutilla</p>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error('Error cargando blogs:', error);
-            container.innerHTML = `
-                <div class="blog-card" style="text-align: center; padding: 40px;">
-                    <h3 style="color: #718096; margin-bottom: 15px;">Error cargando noticias</h3>
-                    <p style="color: #a0aec0;">Intenta recargar la página</p>
-                </div>
-            `;
-        }
-    }
-    <script>
-    // Función para verificar si el blog es nuevo (menos de 7 días)
-    function isBlogNew(dateString) {
-        const blogDate = new Date(dateString);
-        const now = new Date();
-        const diffTime = Math.abs(now - blogDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        return diffDays <= 7;
-    }
     
-    // Función para formatear la fecha
-    function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('es-ES', options);
-    }
-    
-    // Cargar blogs cuando la página se cargue
-    document.addEventListener('DOMContentLoaded', loadBlogs); </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
         // URL de tu backend
         const API_URL = 'https://fiesta-frutilla-backend.onrender.com';
 
+        // Función para verificar si el blog es nuevo (menos de 7 días)
+        function isBlogNew(dateString) {
+            const blogDate = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - blogDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            return diffDays <= 7;
+        }
+        
+        // Función para formatear la fecha
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+        
+        // Cargar blogs desde la API
+        async function loadBlogs() {
+            try {
+                const response = await fetch('/.netlify/functions/get-blogs');
+                const blogs = await response.json();
+                
+                const container = document.getElementById('blogs-container');
+                
+                if (blogs && blogs.length > 0) {
+                    container.innerHTML = blogs.map((blog, index) => {
+                        const isNew = isBlogNew(blog.fecha_publicacion);
+                        const imageUrl = blog.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
+                        
+                        return `
+                            <div class="blog-card">
+                                ${isNew ? '<span class="new-badge">NUEVO</span>' : ''}
+                                <img src="${imageUrl}" alt="${blog.titulo}" class="blog-image">
+                                <div class="blog-content">
+                                    <h3 class="blog-title">${blog.titulo}</h3>
+                                    <p class="blog-excerpt">${blog.contenido.substring(0, 120)}...</p>
+                                    <a href="#" class="read-more">Leer más</a>
+                                    <div class="blog-meta">
+                                        <span class="blog-author">Por: ${blog.autor}</span>
+                                        <span class="blog-date">${formatDate(blog.fecha_publicacion)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="blog-card" style="text-align: center; padding: 40px;">
+                            <h3 style="color: #718096; margin-bottom: 15px;">No hay noticias aún</h3>
+                            <p style="color: #a0aec0;">Pronto publicaremos las últimas novedades de la Fiesta de la Frutilla</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error cargando blogs:', error);
+                container.innerHTML = `
+                    <div class="blog-card" style="text-align: center; padding: 40px;">
+                        <h3 style="color: #718096; margin-bottom: 15px;">Error cargando noticias</h3>
+                        <p style="color: #a0aec0;">Intenta recargar la página</p>
+                    </div>
+                `;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Página cargada, verificando conexión con backend...');
+            
+            // Cargar blogs cuando la página se cargue
+            loadBlogs();
             
             // Mobile Menu Toggle
             const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
@@ -677,6 +733,7 @@ document.addEventListener('DOMContentLoaded', loadBlogs);
                     }
                 });
             }
+        });
     </script>
 </body>
 </html>
