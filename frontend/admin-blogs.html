@@ -227,6 +227,44 @@
         }
     });
     </script>
+    
+    <script>
+
+// Subir imagen al servidor
+async function uploadImage(file) {
+    progressBar.style.display = 'block';
+    
+    // Convertir la imagen a base64
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+        const base64Image = reader.result;
+        
+        try {
+            const response = await fetch(`${API_BASE}/upload-image`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: base64Image })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                imagenUrlInput.value = data.imageUrl;
+                showNotification('Imagen subida correctamente');
+            } else {
+                showNotification('Error al subir la imagen', 'error');
+            }
+        } catch (error) {
+            showNotification('Error de conexión al subir la imagen', 'error');
+        } finally {
+            progressBar.style.display = 'none';
+        }
+    };
+} </script>
    
 </body>
 </html>
