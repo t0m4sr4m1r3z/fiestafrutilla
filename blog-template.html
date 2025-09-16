@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{titulo}} - Fiesta de la Frutilla</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blog-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <a href="index.html">
+                    <i class="fas fa-strawberry fa-2x"></i>
+                    <h1>Fiesta de la Frutilla</h1>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html#inicio">Inicio</a></li>
+                    <li><a href="index.html#historia">Historia</a></li>
+                    <li><a href="index.html#acerca">Acerca de</a></li>
+                    <li><a href="index.html#ubicacion">Ubicación</a></li>
+                    <li><a href="index.html#compra">Comprar Frutillas</a></li>
+                    <li><a href="index.html#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Blog Content -->
+    <main class="blog-main">
+        <article class="blog-article">
+            <div class="container">
+                <div class="blog-header">
+                    <div class="blog-breadcrumb">
+                        <a href="index.html">Inicio</a> > <a href="index.html#historia">Noticias</a> > {{fecha_anio}}
+                    </div>
+                    <h1>{{titulo}}</h1>
+                    <div class="blog-meta">
+                        <span><i class="far fa-calendar"></i> {{fecha_formateada}}</span>
+                        <span><i class="far fa-user"></i> Por {{autor}}</span>
+                        <span><i class="far fa-clock"></i> {{tiempo_lectura}} min lectura</span>
+                    </div>
+                    {{#imagen_url}}
+                    <div class="blog-featured-image">
+                        <img src="{{imagen_url}}" alt="{{titulo}}">
+                        <div class="image-caption">{{titulo}}</div>
+                    </div>
+                    {{/imagen_url}}
+                </div>
+
+                <div class="blog-content">
+                    <p class="blog-intro">{{contenido_preview}}</p>
+
+                    <div id="blog-content-dynamic">
+                        <!-- El contenido se cargará dinámicamente -->
+                    </div>
+
+                    <div class="blog-conclusion">
+                        <h3>Más sobre la Fiesta de la Frutilla</h3>
+                        <p>Este artículo es parte de nuestra cobertura continua de la Fiesta Provincial de la Frutilla de Desmochado, Corrientes.</p>
+                    </div>
+
+                    <div class="blog-navigation">
+                        <a href="index.html#historia" class="nav-button">
+                            <i class="fas fa-arrow-left"></i> Volver a Noticias
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Fiesta de la Frutilla</h3>
+                    <p>Celebrando las tradiciones y la producción de frutillas de Desmochado, Corrientes, Argentina.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html#inicio"><i class="fas fa-arrow-right"></i> Inicio</a></li>
+                        <li><a href="index.html#historia"><i class="fas fa-arrow-right"></i> Historia</a></li>
+                        <li><a href="index.html#acerca"><i class="fas fa-arrow-right"></i> Acerca de</a></li>
+                        <li><a href="index.html#ubicacion"><i class="fas fa-arrow-right"></i> Ubicación</a></li>
+                        <li><a href="index.html#compra"><i class="fas fa-arrow-right"></i> Comprar Frutillas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Desmochado, Bella Vista, Corrientes</a></li>
+                        <li><a href="tel:+543794123456"><i class="fas fa-phone"></i> +54 3794-123456</a></li>
+                        <li><a href="mailto:info@fiestafrutilla.com"><i class="fas fa-envelope"></i> info@fiestafrutilla.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Fiesta Provincial de la Frutilla - Desmochado, Corrientes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Cargar contenido del blog basado en el ID de la URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const blogId = urlParams.get('id');
+            
+            if (blogId) {
+                loadBlogContent(blogId);
+            } else {
+                document.getElementById('blog-content-dynamic').innerHTML = 
+                    '<p>Error: No se especificó un blog para mostrar.</p>';
+            }
+        });
+
+        async function loadBlogContent(blogId) {
+            try {
+                const response = await fetch(`/.netlify/functions/get-blog?id=${blogId}`);
+                const blog = await response.json();
+                
+                if (blog.error) {
+                    throw new Error(blog.error);
+                }
+                
+                // Mostrar el contenido completo
+                document.getElementById('blog-content-dynamic').innerHTML = 
+                    `<div>${blog.contenido}</div>`;
+                    
+            } catch (error) {
+                console.error('Error cargando el blog:', error);
+                document.getElementById('blog-content-dynamic').innerHTML = 
+                    `<p>Error cargando el contenido: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

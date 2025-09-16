@@ -517,51 +517,52 @@
         
         // Cargar blogs desde la API
         async function loadBlogs() {
-            try {
-                const response = await fetch('/.netlify/functions/get-blogs');
-                const blogs = await response.json();
+    try {
+        const response = await fetch('/.netlify/functions/get-blogs');
+        const blogs = await response.json();
+        
+        const container = document.getElementById('blogs-container');
+        
+        if (blogs && blogs.length > 0) {
+            container.innerHTML = blogs.map((blog, index) => {
+                const isNew = blog.es_nuevo;
+                const imageUrl = blog.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
+                const blogUrl = `blog-dynamic.html?id=${blog.id}`;
                 
-                const container = document.getElementById('blogs-container');
-                
-                if (blogs && blogs.length > 0) {
-                    container.innerHTML = blogs.map((blog, index) => {
-                        const isNew = isBlogNew(blog.fecha_publicacion);
-                        const imageUrl = blog.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
-                        
-                        return `
-                            <div class="blog-card">
-                                ${isNew ? '<span class="new-badge">NUEVO</span>' : ''}
-                                <img src="${imageUrl}" alt="${blog.titulo}" class="blog-image">
-                                <div class="blog-content">
-                                    <h3 class="blog-title">${blog.titulo}</h3>
-                                    <p class="blog-excerpt">${blog.contenido.substring(0, 120)}...</p>
-                                    <a href="#" class="read-more">Leer más</a>
-                                    <div class="blog-meta">
-                                        <span class="blog-author">Por: ${blog.autor}</span>
-                                        <span class="blog-date">${formatDate(blog.fecha_publicacion)}</span>
-                                    </div>
-                                </div>
+                return `
+                    <div class="blog-card">
+                        ${isNew ? '<span class="new-badge">NUEVO</span>' : ''}
+                        <img src="${imageUrl}" alt="${blog.titulo}" class="blog-image">
+                        <div class="blog-content">
+                            <h3 class="blog-title">${blog.titulo}</h3>
+                            <p class="blog-excerpt">${blog.contenido.substring(0, 120)}...</p>
+                            <a href="${blogUrl}" class="read-more">Leer más</a>
+                            <div class="blog-meta">
+                                <span class="blog-author">Por: ${blog.autor}</span>
+                                <span class="blog-date">${formatDate(blog.fecha_publicacion)}</span>
                             </div>
-                        `;
-                    }).join('');
-                } else {
-                    container.innerHTML = `
-                        <div class="blog-card" style="text-align: center; padding: 40px;">
-                            <h3 style="color: #718096; margin-bottom: 15px;">No hay noticias aún</h3>
-                            <p style="color: #a0aec0;">Pronto publicaremos las últimas novedades de la Fiesta de la Frutilla</p>
                         </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error cargando blogs:', error);
-                container.innerHTML = `
-                    <div class="blog-card" style="text-align: center; padding: 40px;">
-                        <h3 style="color: #718096; margin-bottom: 15px;">Error cargando noticias</h3>
-                        <p style="color: #a0aec0;">Intenta recargar la página</p>
                     </div>
                 `;
-            }
+            }).join('');
+        } else {
+            container.innerHTML = `
+                <div class="blog-card" style="text-align: center; padding: 40px;">
+                    <h3 style="color: #718096; margin-bottom: 15px;">No hay noticias aún</h3>
+                    <p style="color: #a0aec0;">Pronto publicaremos las últimas novedades de la Fiesta de la Frutilla</p>
+                </div>
+            `;
         }
+    } catch (error) {
+        console.error('Error cargando blogs:', error);
+        container.innerHTML = `
+            <div class="blog-card" style="text-align: center; padding: 40px;">
+                <h3 style="color: #718096; margin-bottom: 15px;">Error cargando noticias</h3>
+                <p style="color: #a0aec0;">Intenta recargar la página</p>
+            </div>
+        `;
+    }
+}
 
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Página cargada, verificando conexión con backend...');

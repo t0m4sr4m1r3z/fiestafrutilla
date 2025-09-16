@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Fiesta de la Frutilla</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blog-styles.css">
+    <style>
+        .loading-blog {
+            text-align: center;
+            padding: 60px 0;
+        }
+        
+        .blog-content-dynamic {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .blog-content-dynamic h2 {
+            color: #2d3748;
+            margin: 30px 0 15px 0;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .blog-content-dynamic p {
+            margin-bottom: 20px;
+            color: #4a5568;
+        }
+        
+        .blog-content-dynamic img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <a href="index.html">
+                    <i class="fas fa-strawberry fa-2x"></i>
+                    <h1>Fiesta de la Frutilla</h1>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html#inicio">Inicio</a></li>
+                    <li><a href="index.html#historia">Historia</a></li>
+                    <li><a href="index.html#acerca">Acerca de</a></li>
+                    <li><a href="index.html#ubicacion">Ubicación</a></li>
+                    <li><a href="index.html#compra">Comprar Frutillas</a></li>
+                    <li><a href="index.html#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Blog Content -->
+    <main class="blog-main">
+        <article class="blog-article">
+            <div class="container">
+                <div class="blog-header">
+                    <div class="blog-breadcrumb">
+                        <a href="index.html">Inicio</a> > <a href="index.html#historia">Noticias</a>
+                    </div>
+                    <h1 id="blog-title">Cargando...</h1>
+                    <div class="blog-meta" id="blog-meta">
+                        <span><i class="far fa-calendar"></i> <span id="blog-date">--</span></span>
+                        <span><i class="far fa-user"></i> Por <span id="blog-author">--</span></span>
+                        <span><i class="far fa-clock"></i> <span id="blog-reading-time">--</span> min lectura</span>
+                    </div>
+                    <div class="blog-featured-image" id="blog-image-container" style="display: none;">
+                        <img id="blog-image" alt="Imagen del blog">
+                        <div class="image-caption" id="blog-image-caption"></div>
+                    </div>
+                </div>
+
+                <div class="blog-content">
+                    <p class="blog-intro" id="blog-intro">Cargando contenido...</p>
+
+                    <div class="blog-content-dynamic" id="blog-content-dynamic">
+                        <div class="loading-blog">
+                            <div class="loading-spinner"></div>
+                            <p>Cargando contenido del blog...</p>
+                        </div>
+                    </div>
+
+                    <div class="blog-conclusion">
+                        <h3>Más sobre la Fiesta de la Frutilla</h3>
+                        <p>Este artículo es parte de nuestra cobertura continua de la Fiesta Provincial de la Frutilla de Desmochado, Corrientes.</p>
+                    </div>
+
+                    <div class="blog-navigation">
+                        <a href="index.html#historia" class="nav-button">
+                            <i class="fas fa-arrow-left"></i> Volver a Noticias
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Fiesta de la Frutilla</h3>
+                    <p>Celebrando las tradiciones y la producción de frutillas de Desmochado, Corrientes, Argentina.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html#inicio"><i class="fas fa-arrow-right"></i> Inicio</a></li>
+                        <li><a href="index.html#historia"><i class="fas fa-arrow-right"></i> Historia</a></li>
+                        <li><a href="index.html#acerca"><i class="fas fa-arrow-right"></i> Acerca de</a></li>
+                        <li><a href="index.html#ubicacion"><i class="fas fa-arrow-right"></i> Ubicación</a></li>
+                        <li><a href="index.html#compra"><i class="fas fa-arrow-right"></i> Comprar Frutillas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Desmochado, Bella Vista, Corrientes</a></li>
+                        <li><a href="tel:+543794123456"><i class="fas fa-phone"></i> +54 3794-123456</a></li>
+                        <li><a href="mailto:info@fiestafrutilla.com"><i class="fas fa-envelope"></i> info@fiestafrutilla.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Fiesta Provincial de la Frutilla - Desmochado, Corrientes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // Cargar contenido del blog basado en el ID de la URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const blogId = urlParams.get('id');
+            
+            if (blogId) {
+                loadBlogContent(blogId);
+            } else {
+                document.getElementById('blog-content-dynamic').innerHTML = 
+                    '<p>Error: No se especificó un blog para mostrar.</p>';
+            }
+        });
+
+        async function loadBlogContent(blogId) {
+            try {
+                const response = await fetch(`/.netlify/functions/get-blog?id=${blogId}`);
+                const blog = await response.json();
+                
+                if (blog.error) {
+                    throw new Error(blog.error);
+                }
+                
+                // Actualizar metadatos
+                document.getElementById('blog-title').textContent = blog.titulo;
+                document.getElementById('blog-date').textContent = formatDate(blog.fecha_publicacion);
+                document.getElementById('blog-author').textContent = blog.autor;
+                document.getElementById('blog-reading-time').textContent = calculateReadingTime(blog.contenido);
+                document.getElementById('blog-intro').textContent = blog.contenido.substring(0, 160) + '...';
+                
+                // Mostrar imagen si existe
+                if (blog.imagen_url) {
+                    document.getElementById('blog-image').src = blog.imagen_url;
+                    document.getElementById('blog-image').alt = blog.titulo;
+                    document.getElementById('blog-image-caption').textContent = blog.titulo;
+                    document.getElementById('blog-image-container').style.display = 'block';
+                }
+                
+                // Mostrar el contenido completo
+                document.getElementById('blog-content-dynamic').innerHTML = 
+                    `<div>${formatBlogContent(blog.contenido)}</div>`;
+                    
+            } catch (error) {
+                console.error('Error cargando el blog:', error);
+                document.getElementById('blog-content-dynamic').innerHTML = 
+                    `<div class="error-message">
+                        <h3>Error cargando el contenido</h3>
+                        <p>${error.message}</p>
+                        <a href="index.html#historia" class="nav-button">
+                            <i class="fas fa-arrow-left"></i> Volver a Noticias
+                        </a>
+                    </div>`;
+            }
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+
+        function calculateReadingTime(content) {
+            const wordsPerMinute = 200;
+            const words = content.split(/\s+/).length;
+            return Math.ceil(words / wordsPerMinute);
+        }
+
+        function formatBlogContent(content) {
+            // Convertir saltos de línea en párrafos
+            return content.split('\n\n').map(paragraph => {
+                if (paragraph.trim() !== '') {
+                    return `<p>${paragraph}</p>`;
+                }
+                return '';
+            }).join('');
+        }
+    </script>
+</body>
+</html>
