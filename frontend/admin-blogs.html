@@ -31,21 +31,31 @@
                     <label for="blogAutor">Autor</label>
                     <input type="text" id="blogAutor" placeholder="Nombre del autor" required>
                 </div>
-<div class="form-group">
-    <label for="blogImagen">Imagen del Blog</label>
-    <input type="file" id="blogImageFile" accept="image/*" style="display: none;">
-    <div style="display: flex; gap: 10px; align-items: center;">
-        <button type="button" onclick="document.getElementById('blogImageFile').click()" 
-                style="padding: 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            Seleccionar Imagen
-        </button>
-        <span id="fileName" style="color: #666;">Ninguna imagen seleccionada</span>
-    </div>
-    <div id="imagePreview" style="margin-top: 10px; display: none;">
-        <img id="previewImg" style="max-width: 200px; max-height: 150px; border-radius: 5px;">
-    </div>
-    <input type="hidden" id="blogImagen">
-</div>
+                <div class="form-group">
+                    <label for="blogImageFile">Imagen Principal del Blog</label>
+                    <div class="image-upload-container">
+                        <input type="file" id="blogImageFile" accept="image/*" style="display: none;">
+                        <div class="upload-area" onclick="document.getElementById('blogImageFile').click()">
+                            <div id="upload-placeholder">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p>Haz clic para subir una imagen</p>
+                                <span>Recomendado: 800x400 px</span>
+                            </div>
+                            <img id="previewImg" style="display: none; max-width: 100%; border-radius: 5px;">
+                        </div>
+                        <div id="file-info" style="margin-top: 10px; color: #666; display: none;">
+                            <span id="fileName"></span>
+                            <button type="button" onclick="removeImage()" style="color: #dc3545; margin-left: 10px; background: none; border: none; cursor: pointer;">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="blogImagen">
+                </div>
                 <button type="submit" class="btn-primary">Publicar Blog</button>
             </form>
         </div>

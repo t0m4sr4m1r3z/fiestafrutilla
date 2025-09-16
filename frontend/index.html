@@ -204,21 +204,38 @@ async function loadBlogs() {
 document.addEventListener('DOMContentLoaded', loadBlogs);
 </script>
 
-    <!-- Blog Section -->
-    <section id="historia">
-        <div class="container">
-            <div class="section-title">
-                <h2>Ediciones Anteriores</h2>
-            </div>
+   <!-- Sección de Blogs -->
+<section class="blogs-section">
+    <div class="blogs-header">
+        <h2>Últimas Noticias</h2>
+        <p>Mantente informado sobre los eventos y novedades de la Fiesta de la Frutilla</p>
+    </div>
+    
+    <div class="blogs-container" id="blogs-container">
+        <!-- Los blogs se cargarán aquí dinámicamente -->
+        <div class="blog-card" style="text-align: center; padding: 40px;">
+            <div class="loading-spinner"></div>
+            <p>Cargando noticias...</p>
+        </div>
+    </div>
+</section>
 
-            <div class="year-filter">
-                <button class="filter-btn active" data-year="all">Todos</button>
-                <button class="filter-btn" data-year="2024">2024</button>
-                <button class="filter-btn" data-year="2023">2023</button>
-                <button class="filter-btn" data-year="2022">2022</button>
-            </div>
+<style>
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
 
-            <div class="blog-grid">
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
                 <!-- Blog 2024 -->
                 <article class="blog-card" data-year="2024">
                     <div class="blog-image">
@@ -424,7 +441,70 @@ document.addEventListener('DOMContentLoaded', loadBlogs);
         </div>
     </footer>
     <div id="notification" class="notification"></div>
-
+    async function loadBlogs() {
+        try {
+            const response = await fetch('/.netlify/functions/get-blogs');
+            const blogs = await response.json();
+            
+            const container = document.getElementById('blogs-container');
+            
+            if (blogs && blogs.length > 0) {
+                container.innerHTML = blogs.map((blog, index) => {
+                    const isNew = isBlogNew(blog.fecha_publicacion);
+                    const imageUrl = blog.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
+                    
+                    return `
+                        <div class="blog-card">
+                            ${isNew ? '<span class="new-badge">NUEVO</span>' : ''}
+                            <img src="${imageUrl}" alt="${blog.titulo}" class="blog-image">
+                            <div class="blog-content">
+                                <h3 class="blog-title">${blog.titulo}</h3>
+                                <p class="blog-excerpt">${blog.contenido.substring(0, 120)}...</p>
+                                <a href="#" class="read-more">Leer más</a>
+                                <div class="blog-meta">
+                                    <span class="blog-author">Por: ${blog.autor}</span>
+                                    <span class="blog-date">${formatDate(blog.fecha_publicacion)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="blog-card" style="text-align: center; padding: 40px;">
+                        <h3 style="color: #718096; margin-bottom: 15px;">No hay noticias aún</h3>
+                        <p style="color: #a0aec0;">Pronto publicaremos las últimas novedades de la Fiesta de la Frutilla</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error cargando blogs:', error);
+            container.innerHTML = `
+                <div class="blog-card" style="text-align: center; padding: 40px;">
+                    <h3 style="color: #718096; margin-bottom: 15px;">Error cargando noticias</h3>
+                    <p style="color: #a0aec0;">Intenta recargar la página</p>
+                </div>
+            `;
+        }
+    }
+    <script>
+    // Función para verificar si el blog es nuevo (menos de 7 días)
+    function isBlogNew(dateString) {
+        const blogDate = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - blogDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        return diffDays <= 7;
+    }
+    
+    // Función para formatear la fecha
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('es-ES', options);
+    }
+    
+    // Cargar blogs cuando la página se cargue
+    document.addEventListener('DOMContentLoaded', loadBlogs); </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
         // URL de tu backend
