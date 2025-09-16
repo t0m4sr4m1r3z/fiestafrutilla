@@ -1,57 +1,68 @@
 const { Pool } = require('pg');
 
 exports.handler = async (event, context) => {
-  const { id } = event.queryStringParameters;
-  
-  if (!id) {
-    return {
-      statusCode: 400,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ error: 'ID de blog no proporcionado' })
-    };
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
   }
 
+  if (event.httpMethod !== 'GET') {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  const { id } = event.queryStringParameters || {};
+  
   const pool = new Pool({
-    connectionString: process.env.NETLIFY_DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
   });
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM blogs WHERE id = $1',
-      [id]
-    );
+    if (id) {
+      // Get single blog
+      const result = await pool.query(
+        'SELECT * FROM blogs WHERE id = $1',
+        [id]
+      );
 
-    if (result.rows.length === 0) {
+      if (result.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ error: 'Blog no encontrado' })
+        };
+      }
+
       return {
-        statusCode: 404,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ error: 'Blog no encontrado' })
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result.rows[0])
+      };
+    } else {
+      // Get all blogs
+      const result = await pool.query(
+        'SELECT * FROM blogs WHERE estado = $1 ORDER BY fecha_publicacion DESC',
+        ['activo']
+      );
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result.rows)
       };
     }
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(result.rows[0])
-    };
   } catch (error) {
+    console.error('Error obteniendo blogs:', error);
     return {
       statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ error: 'Error al obtener el blog' })
+      headers,
+      body: JSON.stringify({ error: 'Error al obtener los blogs' })
     };
   } finally {
     await pool.end();

@@ -188,15 +188,16 @@ class AdminConfig {
                 return { error: 'No hay token de autenticación' };
             }
 
-            const formData = new FormData();
-            formData.append('image', imageFile);
+            // Convertir imagen a base64
+            const base64Image = await this.convertFileToBase64(imageFile);
 
             const response = await fetch(`${API_BASE}/upload-image`, {
                 method: 'POST',
                 headers: { 
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
-                body: formData
+                body: JSON.stringify({ image: base64Image })
             });
 
             if (!response.ok) {
@@ -215,9 +216,43 @@ class AdminConfig {
             return { error: 'Error de conexión' };
         }
     }
+
+    static async convertFileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
 }
 
-// Función para renderizar blogs (debe estar en el contexto adecuado)
+// Funciones globales para la UI
+async function deleteBlog(id) {
+    if (!confirm('¿Estás seguro de que quieres eliminar este blog?')) {
+        return;
+    }
+
+    const result = await AdminConfig.deleteBlog(id);
+    if (result.error) {
+        alert('Error: ' + result.error);
+    } else {
+        alert('Blog eliminado correctamente');
+        loadBlogs();
+    }
+}
+
+async function loadBlogs() {
+    if (!checkAuth()) return;
+
+    const result = await AdminConfig.getBlogs();
+    if (result.error) {
+        alert('Error: ' + result.error);
+    } else {
+        renderBlogs(result.blogs || result);
+    }
+}
+
 function renderBlogs(blogs) {
     const blogsList = document.getElementById('blogsList');
     if (!blogsList) return;
@@ -240,35 +275,7 @@ function renderBlogs(blogs) {
     `).join('');
 }
 
-// Función para eliminar blog (debe estar en el ámbito global)
-async function deleteBlog(id) {
-    if (!confirm('¿Estás seguro de que quieres eliminar este blog?')) {
-        return;
-    }
-
-    const result = await AdminConfig.deleteBlog(id);
-    if (result.error) {
-        alert('Error: ' + result.error);
-    } else {
-        alert('Blog eliminado correctamente');
-        // Recargar la lista de blogs
-        loadBlogs();
-    }
-}
-
-// Función para cargar blogs
-async function loadBlogs() {
-    if (!checkAuth()) return;
-
-    const result = await AdminConfig.getBlogs();
-    if (result.error) {
-        alert('Error: ' + result.error);
-    } else {
-        renderBlogs(result.blogs || result);
-    }
-}
-
-// Event listener para el formulario de login
+// Event listeners
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
@@ -295,36 +302,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (protectedPages.includes(currentPage)) {
         checkAuth();
         
-        // Cargar datos específicos de cada página
         if (currentPage === 'admin-blogs.html') {
             loadBlogs();
-        } else if (currentPage === 'admin-dashboard.html') {
-            loadDashboardData();
         }
     }
 });
 
-// Función para cargar datos del dashboard
-async function loadDashboardData() {
-    if (!checkAuth()) return;
-
-    const result = await AdminConfig.getDashboardData();
-    if (result.error) {
-        alert('Error: ' + result.error);
-    } else {
-        // Aquí procesarías los datos del dashboard
-        console.log('Datos del dashboard:', result);
-    }
-}
-
-// Función para cerrar sesión
-function logout() {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    window.location.href = '/admin.html';
-}
-
-// Función para verificar autenticación
 function checkAuth() {
     const token = localStorage.getItem('adminToken');
     if (!token) {
@@ -332,4 +315,10 @@ function checkAuth() {
         return false;
     }
     return true;
+}
+
+function logout() {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    window.location.href = '/admin.html';
 }
