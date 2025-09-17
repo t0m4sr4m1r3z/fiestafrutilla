@@ -1,213 +1,53 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Blogs - Fiesta de la Frutilla</title>
-    <link rel="stylesheet" href="/admin-style.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <div class="header">
-            <h1>Gestión de Blogs</h1>
-            <div>
-                <a href="/admin-dashboard.html" class="btn-edit">Volver al Dashboard</a>
-                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
-            </div>
-        </div>
-
-        <div class="form-container">
-            <h2>Crear Nuevo Blog</h2>
-            <form id="createBlogForm">
-                <div class="form-group">
-                    <label for="blogTitulo">Título</label>
-                    <input type="text" id="blogTitulo" placeholder="Título del blog" required>
-                </div>
-                <div class="form-group">
-                    <label for="blogContenido">Contenido</label>
-                    <textarea id="blogContenido" placeholder="Contenido del blog..." rows="6" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="blogAutor">Autor</label>
-                    <input type="text" id="blogAutor" placeholder="Nombre del autor" required>
-                </div>
-                <div class="form-group">
-                    <label for="blogImageFile">Imagen Principal del Blog</label>
-                    <div class="image-upload-container">
-                        <input type="file" id="blogImageFile" accept="image/*" style="display: none;">
-                        <div class="upload-area" onclick="document.getElementById('blogImageFile').click()">
-                            <div id="upload-placeholder">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
-                                <p>Haz clic para subir una imagen</p>
-                                <span>Recomendado: 800x400 px</span>
-                            </div>
-                            <img id="previewImg" style="display: none; max-width: 100%; border-radius: 5px;">
-                        </div>
-                        <div id="file-info" style="margin-top: 10px; color: #666; display: none;">
-                            <span id="fileName"></span>
-                            <button type="button" onclick="removeImage()" style="color: #dc3545; margin-left: 10px; background: none; border: none; cursor: pointer;">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                    <input type="hidden" id="blogImagen">
-                </div>
-                <button type="submit" class="btn-primary">Publicar Blog</button>
-            </form>
-        </div>
-
-        <div class="blog-list">
-            <h2>Blogs Existentes</h2>
-            <div id="blogsList">
-                <p>Cargando blogs...</p>
-            </div>
-        </div>
-    </div>
-
-    <script src="/admin-config.js"></script>
-    <script>
-        // Verificar autenticación
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-            window.location.href = '/admin.html';
-        }
-
-        // Cargar blogs
-        async function loadBlogs() {
-            try {
-                const blogs = await AdminConfig.getBlogs();
-                const blogsList = document.getElementById('blogsList');
-                
-                if (Array.isArray(blogs) && blogs.length > 0) {
-                    blogsList.innerHTML = blogs.map(blog => `
-                        <div class="blog-item">
-                            <div class="blog-info">
-                                <h3>${blog.titulo}</h3>
-                                <div class="blog-meta">
-                                    <strong>Autor:</strong> ${blog.autor} | 
-                                    <strong>Fecha:</strong> ${new Date(blog.fecha_publicacion).toLocaleDateString()} |
-                                    <strong>Estado:</strong> ${blog.estado || 'activo'}
-                                </div>
-                            </div>
-                            <div class="blog-actions">
-                                <button class="btn-edit" onclick="editBlog(${blog.id})">Editar</button>
-                                <button class="btn-delete" onclick="deleteBlog(${blog.id})">Eliminar</button>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    blogsList.innerHTML = '<p>No hay blogs publicados todavía.</p>';
-                }
-            } catch (error) {
-                console.error('Error cargando blogs:', error);
-                document.getElementById('blogsList').innerHTML = '<p>Error cargando blogs. Intenta nuevamente.</p>';
-            }
-        }
-
-        // Crear blog
-        document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const blogData = {
-                titulo: document.getElementById('blogTitulo').value,
-                contenido: document.getElementById('blogContenido').value,
-                autor: document.getElementById('blogAutor').value,
-                imagen_url: document.getElementById('blogImagen').value
-            };
-
-            const result = await AdminConfig.createBlog(blogData);
-            if (result.id) {
-                alert('¡Blog creado exitosamente!');
-                document.getElementById('createBlogForm').reset();
-                await loadBlogs();
-            } else {
-                alert('Error: ' + (result.error || 'Error al crear blog'));
-            }
-        });
-
-        // Eliminar blog
-        async function deleteBlog(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar este blog? Esta acción no se puede deshacer.')) {
-                const result = await AdminConfig.deleteBlog(id);
-                if (result.message) {
-                    alert('Blog eliminado correctamente');
-                    await loadBlogs();
-                } else {
-                    alert('Error eliminando blog: ' + (result.error || 'Error desconocido'));
-                }
-            }
-        }
-
-        // Editar blog (placeholder)
-        function editBlog(id) {
-            alert('Funcionalidad de edición coming soon! Blog ID: ' + id);
-            // Aquí implementarás la edición completa
-        }
-
-        // Cargar blogs al iniciar
-        document.addEventListener('DOMContentLoaded', loadBlogs);
-
-   let selectedImageFile = null;
+<script>
+    // Verificar autenticación
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+        window.location.href = '/admin.html';
+    }
     
+    let selectedImageFile = null;
+    
+    // Manejo de selección de imagen
     document.getElementById('blogImageFile').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
             selectedImageFile = file;
-            document.getElementById('fileName').textContent = file.name;
             
             // Mostrar preview
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('imagePreview').style.display = 'block';
                 document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('previewImg').style.display = 'block';
+                document.getElementById('upload-placeholder').style.display = 'none';
             }
             reader.readAsDataURL(file);
         }
     });
     
-    // Función para subir imagen
-    async function uploadImage(file) {
-        try {
-            const token = localStorage.getItem('adminToken');
-            
-            // Simulamos la subida - en producción aquí subirías a Cloudinary/S3
-            const fakeImageUrl = `https://via.placeholder.com/800x400?text=${encodeURIComponent(file.name)}`;
-            
-            const response = await fetch(`${API_BASE}/upload-image`, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ imageUrl: fakeImageUrl })
-            });
-            
-            const result = await response.json();
-            return result.imageUrl;
-        } catch (error) {
-            console.error('Error subiendo imagen:', error);
-            return null;
-        }
+    function removeImage() {
+        selectedImageFile = null;
+        document.getElementById('blogImageFile').value = '';
+        document.getElementById('previewImg').style.display = 'none';
+        document.getElementById('upload-placeholder').style.display = 'block';
     }
     
-    // Modificar el submit del formulario para manejar imágenes
+    // Crear blog
     document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        let imageUrl = document.getElementById('blogImagen').value;
+        let imageUrl = '';
         
-        // Si hay una imagen seleccionada, subirla
+        // Subir imagen si hay una seleccionada
         if (selectedImageFile) {
-            const uploadedUrl = await uploadImage(selectedImageFile);
-            if (uploadedUrl) {
-                imageUrl = uploadedUrl;
+            const uploadResult = await AdminConfig.uploadImage(selectedImageFile);
+            if (uploadResult.success) {
+                imageUrl = uploadResult.imageUrl;
+            } else {
+                alert('Error subiendo imagen: ' + uploadResult.error);
+                return;
             }
         }
-        
+    
         const blogData = {
             titulo: document.getElementById('blogTitulo').value,
             contenido: document.getElementById('blogContenido').value,
@@ -219,52 +59,13 @@
         if (result.id) {
             alert('¡Blog creado exitosamente!');
             document.getElementById('createBlogForm').reset();
-            document.getElementById('imagePreview').style.display = 'none';
-            selectedImageFile = null;
-            await loadBlogs();
+            removeImage();
+            loadBlogs();
         } else {
             alert('Error: ' + (result.error || 'Error al crear blog'));
         }
     });
+    
+    // Cargar blogs al iniciar
+    document.addEventListener('DOMContentLoaded', loadBlogs);
     </script>
-    
-    <script>
-
-// Subir imagen al servidor
-async function uploadImage(file) {
-    progressBar.style.display = 'block';
-    
-    // Convertir la imagen a base64
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = async () => {
-        const base64Image = reader.result;
-        
-        try {
-            const response = await fetch(`${API_BASE}/upload-image`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ image: base64Image })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                imagenUrlInput.value = data.imageUrl;
-                showNotification('Imagen subida correctamente');
-            } else {
-                showNotification('Error al subir la imagen', 'error');
-            }
-        } catch (error) {
-            showNotification('Error de conexión al subir la imagen', 'error');
-        } finally {
-            progressBar.style.display = 'none';
-        }
-    };
-} </script>
-   
-</body>
-</html>

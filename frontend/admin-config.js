@@ -20,6 +20,45 @@ class AdminConfig {
         }
     }
 
+    static async uploadImage(imageFile) {
+        try {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                return { error: 'No hay token de autenticación' };
+            }
+    
+            // Convertir imagen a base64
+            const base64Image = await this.convertFileToBase64(imageFile);
+    
+            const response = await fetch(`${API_BASE}/upload-image`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: base64Image })
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            return await response.json();
+        } catch (error) {
+            console.error('Error subiendo imagen:', error);
+            return { error: 'Error de conexión' };
+        }
+    }
+    
+    static async convertFileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
     static async getDashboardData() {
         try {
             const token = localStorage.getItem('adminToken');
