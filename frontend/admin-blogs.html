@@ -1,71 +1,607 @@
-<script>
-    // Verificar autenticación
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-        window.location.href = '/admin.html';
-    }
-    
-    let selectedImageFile = null;
-    
-    // Manejo de selección de imagen
-    document.getElementById('blogImageFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            selectedImageFile = file;
-            
-            // Mostrar preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('previewImg').src = e.target.result;
-                document.getElementById('previewImg').style.display = 'block';
-                document.getElementById('upload-placeholder').style.display = 'none';
-            }
-            reader.readAsDataURL(file);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Blogs - Fiesta de la Frutilla</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    });
-    
-    function removeImage() {
-        selectedImageFile = null;
-        document.getElementById('blogImageFile').value = '';
-        document.getElementById('previewImg').style.display = 'none';
-        document.getElementById('upload-placeholder').style.display = 'block';
-    }
-    
-    // Crear blog
-    document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        let imageUrl = '';
-        
-        // Subir imagen si hay una seleccionada
-        if (selectedImageFile) {
-            const uploadResult = await AdminConfig.uploadImage(selectedImageFile);
-            if (uploadResult.success) {
-                imageUrl = uploadResult.imageUrl;
-            } else {
-                alert('Error subiendo imagen: ' + uploadResult.error);
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #4a5568;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+        }
+
+        .btn-edit, .logout-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .btn-edit {
+            background: #48bb78;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-edit:hover, .logout-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .form-container {
+            padding: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-container h2 {
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
+        .image-upload-container {
+            margin-top: 0.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f7fafc;
+        }
+
+        .upload-area:hover {
+            border-color: #4299e1;
+            background-color: #edf2f7;
+        }
+
+        #upload-placeholder {
+            color: #718096;
+        }
+
+        #upload-placeholder svg {
+            margin-bottom: 10px;
+        }
+
+        #previewImg {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+
+        .blog-list {
+            padding: 2rem;
+        }
+
+        .blog-list h2 {
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+            font-size: 1.5rem;
+        }
+
+        .blog-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.3s;
+        }
+
+        .blog-item:hover {
+            background-color: #f7fafc;
+        }
+
+        .blog-info h3 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-meta {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .blog-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-delete {
+            background: #e53e3e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-delete:hover {
+            background: #c53030;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification.success {
+            background-color: #38a169;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.error {
+            background-color: #e53e3e;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            color: #4a5568;
+        }
+
+        .remove-image {
+            color: #e53e3e;
+            margin-left: 10px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .blog-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .blog-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Gestión de Blogs</h1>
+            <div>
+                <a href="/admin-dashboard.html" class="btn-edit">Volver al Dashboard</a>
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h2>Crear Nuevo Blog</h2>
+            <form id="createBlogForm">
+                <div class="form-group">
+                    <label for="blogTitulo">Título</label>
+                    <input type="text" id="blogTitulo" placeholder="Título del blog" required>
+                </div>
+                <div class="form-group">
+                    <label for="blogContenido">Contenido</label>
+                    <textarea id="blogContenido" placeholder="Contenido del blog..." rows="6" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="blogAutor">Autor</label>
+                    <input type="text" id="blogAutor" placeholder="Nombre del autor" required>
+                </div>
+                <div class="form-group">
+                    <label for="blogImageFile">Imagen Principal del Blog</label>
+                    <div class="image-upload-container">
+                        <input type="file" id="blogImageFile" accept="image/*" style="display: none;">
+                        <div class="upload-area" onclick="document.getElementById('blogImageFile').click()">
+                            <div id="upload-placeholder">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p>Haz clic para subir una imagen</p>
+                                <span>Recomendado: 800x400 px</span>
+                            </div>
+                            <img id="previewImg" alt="Vista previa de la imagen">
+                        </div>
+                        <div class="file-info" id="fileInfo" style="display: none;">
+                            <span id="fileName"></span>
+                            <button type="button" class="remove-image" onclick="removeImage()">×</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <span id="btnText">Publicar Blog</span>
+                    <span id="btnLoading" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+
+        <div class="blog-list">
+            <h2>Blogs Existentes</h2>
+            <div id="blogsList">
+                <p>Cargando blogs...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Configuración
+        const API_BASE = '/.netlify/functions';
+        let selectedImageFile = null;
+
+        // Verificar autenticación
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            window.location.href = '/admin.html';
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+            }, 3000);
+        }
+
+        // Convertir archivo a Base64
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Subir imagen
+        async function uploadImage(file) {
+            try {
+                const base64Image = await convertFileToBase64(file);
+                
+                const response = await fetch(`${API_BASE}/upload-image`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image: base64Image })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error subiendo imagen:', error);
+                throw error;
+            }
+        }
+
+        // Cargar blogs
+        async function loadBlogs() {
+            try {
+                const response = await fetch(`${API_BASE}/admin-blogs`, {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = '/admin.html';
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const blogs = await response.json();
+                const blogsList = document.getElementById('blogsList');
+                
+                if (Array.isArray(blogs) && blogs.length > 0) {
+                    blogsList.innerHTML = blogs.map(blog => `
+                        <div class="blog-item">
+                            <div class="blog-info">
+                                <h3>${blog.titulo}</h3>
+                                <div class="blog-meta">
+                                    <strong>Autor:</strong> ${blog.autor} | 
+                                    <strong>Fecha:</strong> ${new Date(blog.fecha_publicacion).toLocaleDateString()} |
+                                    <strong>Estado:</strong> ${blog.estado || 'activo'}
+                                </div>
+                            </div>
+                            <div class="blog-actions">
+                                <button class="btn-delete" onclick="deleteBlog(${blog.id})">Eliminar</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    blogsList.innerHTML = '<p>No hay blogs publicados todavía.</p>';
+                }
+            } catch (error) {
+                console.error('Error cargando blogs:', error);
+                document.getElementById('blogsList').innerHTML = '<p>Error cargando blogs. Intenta nuevamente.</p>';
+            }
+        }
+
+        // Eliminar blog
+        async function deleteBlog(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este blog? Esta acción no se puede deshacer.')) {
                 return;
             }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin-blogs`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id })
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = '/admin.html';
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                showNotification('Blog eliminado correctamente');
+                loadBlogs();
+            } catch (error) {
+                console.error('Error eliminando blog:', error);
+                showNotification('Error eliminando blog', 'error');
+            }
         }
-    
-        const blogData = {
-            titulo: document.getElementById('blogTitulo').value,
-            contenido: document.getElementById('blogContenido').value,
-            autor: document.getElementById('blogAutor').value,
-            imagen_url: imageUrl
-        };
-    
-        const result = await AdminConfig.createBlog(blogData);
-        if (result.id) {
-            alert('¡Blog creado exitosamente!');
-            document.getElementById('createBlogForm').reset();
-            removeImage();
+
+        // Remover imagen seleccionada
+        function removeImage() {
+            selectedImageFile = null;
+            document.getElementById('blogImageFile').value = '';
+            document.getElementById('previewImg').style.display = 'none';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('upload-placeholder').style.display = 'block';
+        }
+
+        // Cerrar sesión
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin.html';
+        }
+
+        // Eventos cuando el documento está listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar blogs al iniciar
             loadBlogs();
-        } else {
-            alert('Error: ' + (result.error || 'Error al crear blog'));
-        }
-    });
-    
-    // Cargar blogs al iniciar
-    document.addEventListener('DOMContentLoaded', loadBlogs);
+
+            // Manejar selección de imagen
+            document.getElementById('blogImageFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedImageFile = file;
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('fileInfo').style.display = 'flex';
+                    
+                    // Mostrar vista previa
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('previewImg').src = e.target.result;
+                        document.getElementById('previewImg').style.display = 'block';
+                        document.getElementById('upload-placeholder').style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Manejar envío del formulario
+            document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const btnText = document.getElementById('btnText');
+                const btnLoading = document.getElementById('btnLoading');
+                
+                // Mostrar estado de carga
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline-block';
+                
+                try {
+                    let imageUrl = '';
+                    
+                    // Subir imagen si hay una seleccionada
+                    if (selectedImageFile) {
+                        const uploadResult = await uploadImage(selectedImageFile);
+                        if (uploadResult.success) {
+                            imageUrl = uploadResult.imageUrl;
+                        } else {
+                            throw new Error('Error al subir la imagen');
+                        }
+                    }
+
+                    const blogData = {
+                        titulo: document.getElementById('blogTitulo').value,
+                        contenido: document.getElementById('blogContenido').value,
+                        autor: document.getElementById('blogAutor').value,
+                        imagen_url: imageUrl
+                    };
+
+                    const response = await fetch(`${API_BASE}/admin-blogs`, {
+                        method: 'POST',
+                        headers: { 
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(blogData)
+                    });
+
+                    if (response.status === 401) {
+                        localStorage.removeItem('adminToken');
+                        window.location.href = '/admin.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.id) {
+                        showNotification('¡Blog creado exitosamente!');
+                        document.getElementById('createBlogForm').reset();
+                        removeImage();
+                        loadBlogs();
+                    } else {
+                        throw new Error('Error al crear blog');
+                    }
+                } catch (error) {
+                    console.error('Error creando blog:', error);
+                    showNotification('Error: ' + (error.message || 'Error al crear blog'), 'error');
+                } finally {
+                    // Restaurar estado del botón
+                    btnText.style.display = 'inline-block';
+                    btnLoading.style.display = 'none';
+                }
+            });
+        });
     </script>
+</body>
+</html>
