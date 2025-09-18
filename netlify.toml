@@ -19,3 +19,12 @@
   from = "/admin-blogs"
   to = "/admin-blogs.html"
   status = 200
+  
+[build]
+  publish = "frontend"
+  functions = "functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

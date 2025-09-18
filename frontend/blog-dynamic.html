@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog - Fiesta de la Frutilla</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="blog-styles.css">
     <style>
+        /* Estilos para la página de blog */
         .loading-blog {
             text-align: center;
             padding: 60px 0;
@@ -34,6 +34,40 @@
             height: auto;
             border-radius: 8px;
             margin: 20px 0;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            background-color: #fed7d7;
+            border-radius: 8px;
+            color: #c53030;
+            margin: 20px 0;
+        }
+        
+        .debug-info {
+            background-color: #edf2f7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -157,14 +191,46 @@
             if (blogId) {
                 loadBlogContent(blogId);
             } else {
-                document.getElementById('blog-content-dynamic').innerHTML = 
-                    '<p>Error: No se especificó un blog para mostrar.</p>';
+                showError('Error: No se especificó un blog para mostrar.');
             }
         });
 
         async function loadBlogContent(blogId) {
             try {
-                const response = await fetch(`/.netlify/functions/get-blog?id=${blogId}`);
+                console.log('Cargando blog con ID:', blogId);
+                
+                const response = await fetch(`/.netlify/functions/get-blogs?id=${blogId}`);
+                
+                // Verificar si la respuesta es OK (status 200-299)
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response text:', errorText);
+                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}. Response: ${errorText.substring(0, 100)}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Respuesta no JSON recibida:', text.substring(0, 200));
+                    
+                    // Mostrar información de depuración
+                    document.getElementById('blog-content-dynamic').innerHTML = `
+                        <div class="error-message">
+                            <h3>Error de formato en la respuesta</h3>
+                            <p>El servidor devolvió HTML en lugar de JSON. Esto generalmente indica un error en la función de Netlify.</p>
+                            <div class="debug-info">
+                                <strong>URL solicitada:</strong> /.netlify/functions/get-blogs?id=${blogId}<br>
+                                <strong>Estado HTTP:</strong> ${response.status}<br>
+                                <strong>Tipo de contenido:</strong> ${contentType || 'No especificado'}<br>
+                                <strong>Primeros 200 caracteres de la respuesta:</strong><br>
+                                ${escapeHtml(text.substring(0, 200))}
+                            </div>
+                            <p>Por favor, contacte al administrador del sitio.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
                 const blog = await response.json();
                 
                 if (blog.error) {
@@ -192,14 +258,7 @@
                     
             } catch (error) {
                 console.error('Error cargando el blog:', error);
-                document.getElementById('blog-content-dynamic').innerHTML = 
-                    `<div class="error-message">
-                        <h3>Error cargando el contenido</h3>
-                        <p>${error.message}</p>
-                        <a href="index.html#historia" class="nav-button">
-                            <i class="fas fa-arrow-left"></i> Volver a Noticias
-                        </a>
-                    </div>`;
+                showError(error.message);
             }
         }
 
@@ -222,6 +281,23 @@
                 }
                 return '';
             }).join('');
+        }
+
+        function showError(message) {
+            document.getElementById('blog-content-dynamic').innerHTML = 
+                `<div class="error-message">
+                    <h3>Error cargando el contenido</h3>
+                    <p>${escapeHtml(message)}</p>
+                    <a href="index.html#historia" class="nav-button">
+                        <i class="fas fa-arrow-left"></i> Volver a Noticias
+                    </a>
+                </div>`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     </script>
 </body>
