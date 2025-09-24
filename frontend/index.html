@@ -250,6 +250,18 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
+
+        /* Estilos para la sección "Acerca de" oculta inicialmente */
+        #acerca {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #acerca.visible {
+            display: block;
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -263,12 +275,13 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#historia">Historia</a></li>
-                    <li><a href="#acerca">Acerca de</a></li>
-                    <li><a href="#ubicacion">Ubicación</a></li>
-                    <li><a href="#compra">Comprar Frutillas</a></li>
-                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="#inicio">INICIO</a></li>
+                    <li><a href="#acerca">ACERCA DE</a></li>
+                    <li><a href="historia.html">HISTORIA</a></li>
+                    <li><a href="#noticias">NOTICIAS</a></li>
+                    <li><a href="#ubicacion">UBICACIÓN</a></li>
+                    <li><a href="productores.html">COMPRAR FRUTILLAS</a></li>
+                    <li><a href="#contacto">CONTACTO</a></li>
                 </ul>
             </nav>
             <button class="mobile-menu-btn">
@@ -282,7 +295,7 @@
         <div class="container">
             <h2>Fiesta Provincial de la Frutilla</h2>
             <p>Celebramos la cultura y tradición de Desmochado, Corrientes, en honor a la deliciosa frutilla que caracteriza nuestra región.</p>
-            <a href="#acerca" class="btn">Conoce más</a>
+            <a href="#acerca" class="btn" id="conoce-mas-btn">Conoce más</a>
         </div>
     </section>
 
@@ -321,7 +334,7 @@
     </section>
 
     <!-- Sección de Blogs -->
-    <section class="blogs-section">
+    <section class="blogs-section" id="noticias">
         <div class="blogs-header">
             <h2>Últimas Noticias</h2>
             <p>Mantente informado sobre los eventos y novedades de la Fiesta de la Frutilla</p>
@@ -393,66 +406,6 @@
         </div>
     </section>
 
-    <!-- Purchase Section -->
-    <section id="compra" class="purchase-section">
-        <div class="container">
-            <div class="section-title">
-                <h2 style="color: white;">Adquiere Nuestras Frutillas</h2>
-            </div>
-
-            <div class="purchase-container">
-                <div class="purchase-info">
-                    <h2>Frutillas Frescas de Desmochado</h2>
-                    <p>Lleva a tu hogar el sauténtico sabor de Corrientes con nuestras frutillas recién cosechadas, seleccionadas cuidadosamente para garantizar la mejor calidad.</p>
-                    
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> Producto 100% fresco y natural</li>
-                        <li><i class="fas fa-check-circle"></i> Cosechado el mismo día del envío</li>
-                        <li><i class="fas fa-check-circle"></i> Envío a domicilio en cajones de 5kg</li>
-                        <li><i class="fas fa-check-circle"></i> Pago seguro contra entrega</li>
-                    </ul>
-                    
-                    <p><strong>Precio especial: $15.000 por cajón</strong></p>
-                </div>
-
-                <div class="purchase-form">
-                    <h3>Formulario de Pedido</h3>
-                    <div id="form-status" class="form-status"></div> 
-                    <form id="order-form">
-                        <div class="form-group">
-                            <label for="name">Nombre completo *</label>
-                            <input type="text" id="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Correo electrónico *</label>
-                            <input type="email" id="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Teléfono *</label>
-                            <input type="tel" id="phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity">Cantidad de cajones *</label>
-                            <input type="number" id="quantity" min="1" value="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="address">Dirección de entrega *</label>
-                            <textarea id="address" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="notes">Instrucciones especiales</label>
-                            <textarea id="notes" rows="2"></textarea>
-                        </div>
-                        <button type="submit" id="submit-btn" class="submit-btn">
-                            <span id="btn-text">Realizar Pedido</span>
-                            <span id="btn-loading" class="loading" style="display: none;"></span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer id="contacto">
         <div class="container">
@@ -473,6 +426,7 @@
                         <li><a href="#inicio"><i class="fas fa-arrow-right"></i> Inicio</a></li>
                         <li><a href="#historia"><i class="fas fa-arrow-right"></i> Historia</a></li>
                         <li><a href="#acerca"><i class="fas fa-arrow-right"></i> Acerca de</a></li>
+                        <li><a href="#noticias"><i class="fas fa-arrow-right"></i> Noticias</a></li>
                         <li><a href="#ubicacion"><i class="fas fa-arrow-right"></i> Ubicación</a></li>
                         <li><a href="#compra"><i class="fas fa-arrow-right"></i> Comprar Frutillas</a></li>
                         <li><a href="#contacto"><i class="fas fa-arrow-right"></i> Contacto</a></li>
@@ -499,6 +453,20 @@
     <script>
         // URL de tu backend
         const API_URL = 'https://fiesta-frutilla-backend.onrender.com';
+
+        // Función para mostrar/ocultar la sección "Acerca de"
+        function toggleAcercaSection() {
+            const acercaSection = document.getElementById('acerca');
+            acercaSection.classList.toggle('visible');
+            
+            // Si se está mostrando, hacer scroll suave hacia la sección
+            if (acercaSection.classList.contains('visible')) {
+                window.scrollTo({
+                    top: acercaSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        }
 
         // Función para verificar si el blog es nuevo (menos de 7 días)
         function isBlogNew(dateString) {
@@ -570,6 +538,15 @@
             // Cargar blogs cuando la página se cargue
             loadBlogs();
             
+            // Configurar el botón "Conoce más" para mostrar/ocultar la sección "Acerca de"
+            const conoceMasBtn = document.getElementById('conoce-mas-btn');
+            if (conoceMasBtn) {
+                conoceMasBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleAcercaSection();
+                });
+            }
+            
             // Mobile Menu Toggle
             const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
             const navMenu = document.querySelector('nav ul');
@@ -631,6 +608,13 @@
                     
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
+                        // Si es el enlace "Acerca de", asegurarse de que esté visible
+                        if (targetId === '#acerca') {
+                            if (!targetElement.classList.contains('visible')) {
+                                toggleAcercaSection();
+                            }
+                        }
+                        
                         window.scrollTo({
                             top: targetElement.offsetTop - 80,
                             behavior: 'smooth'

@@ -1,0 +1,13 @@
+Categorias dentro de la pagina. Editar blogs.
+
+Historia -> blogs.
+
+Noticias -> blogs.
+
+Fiestas anteriores.
+
+INICIO. ACERCA DE. HISTORIA. NOTICIAS. UBICACION. COMPRAR FRUTILLAS. CONTACTO.
+
+PUBLICIDADES.
+
+CADA LINK LLEVA A UNA PAGINA PROPIA

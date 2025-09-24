@@ -16,35 +16,35 @@
         <div class="stats-container">
             <div class="stat-card">
                 <div class="stat-label">Total de Visitantes</div>
-                <div class="stat-number" id="visitors-count">1,245</div>
+                <div class="stat-number" id="visitors-count">0</div>
                 <div class="stat-label">Este mes</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Blogs Publicados</div>
+                <div class="stat-label">Noticias Publicadas</div>
                 <div class="stat-number" id="blogs-count">0</div>
                 <div class="stat-label">Total</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Comentarios</div>
-                <div class="stat-number" id="comments-count">0</div>
-                <div class="stat-label">Por moderar</div>
+                <div class="stat-label">Historias Publicadas</div>
+                <div class="stat-number" id="historias-count">0</div>
+                <div class="stat-label">Total</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Usuarios</div>
-                <div class="stat-number" id="users-count">0</div>
-                <div class="stat-label">Registrados</div>
+                <div class="stat-label">Productores Registrados</div>
+                <div class="stat-number" id="productores-count">0</div>
+                <div class="stat-label">Total</div>
             </div>
         </div>
+        
 
         <div class="actions-container">
             <h2>Acciones Rápidas</h2>
             <div class="actions-grid">
-                <a href="/admin-blogs.html" class="action-btn">Gestionar Blogs</a>
-                <a href="#" class="action-btn">Gestionar Eventos</a>
-                <a href="#" class="action-btn">Moderar Comentarios</a>
+                <a href="/admin-blogs.html" class="action-btn">Gestionar Noticias</a>
+                <a href="/admin-historias.html" class="action-btn">Gestionar Historias</a>
+                <a href="/admin-productores.html" class="action-btn">Gestionar Productores</a>
                 <a href="#" class="action-btn">Ver Estadísticas</a>
                 <a href="#" class="action-btn">Configuración</a>
-                <a href="#" class="action-btn">Backup</a>
             </div>
         </div>
 
@@ -74,23 +74,39 @@
 
         // Cargar estadísticas
         async function loadStats() {
-            try {
-                // Aquí integrarás con tus funciones reales
-                const stats = {
-                    blogs: 12,
-                    comments: 8,
-                    users: 156,
-                    visitors: 1245
-                };
-
-                document.getElementById('blogs-count').textContent = stats.blogs;
-                document.getElementById('comments-count').textContent = stats.comments;
-                document.getElementById('users-count').textContent = stats.users;
-                document.getElementById('visitors-count').textContent = stats.visitors.toLocaleString();
-            } catch (error) {
-                console.error('Error cargando estadísticas:', error);
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admin-dashboard`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            document.getElementById('visitors-count').textContent = data.visitors || '0';
+            document.getElementById('blogs-count').textContent = data.blogs || '0';
+            document.getElementById('historias-count').textContent = data.historias || '0';
+            document.getElementById('productores-count').textContent = data.productores || '0';
+        } else {
+            // Valores por defecto si hay error
+            document.getElementById('visitors-count').textContent = '1,245';
+            document.getElementById('blogs-count').textContent = '12';
+            document.getElementById('historias-count').textContent = '8';
+            document.getElementById('productores-count').textContent = '25';
         }
+    } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+        // Valores por defecto
+        document.getElementById('visitors-count').textContent = '1,245';
+        document.getElementById('blogs-count').textContent = '12';
+        document.getElementById('historias-count').textContent = '8';
+        document.getElementById('productores-count').textContent = '25';
+    }
+}
+
 
         // Formulario rápido de blog
         document.getElementById('quickBlogForm').addEventListener('submit', async (e) => {
