@@ -235,7 +235,7 @@
                     <ul>
                         <li><a href="#"><i class="fas fa-map-marker-alt"></i> Desmochado, Bella Vista, Corrientes</a></li>
                         <li><a href="tel:+543794123456"><i class="fas fa-phone"></i> +54 3794-123456</a></li>
-                        <li><a href="mailto:productores@fiestafrutilla.com"><i class="fas fa-envelope"></i> productores@fiestafrutilla.com</a></li>
+                        <li><a href="mailto:productores@fiestafrutilla.com"><i class="fas fa-envelope"></i> fiestadelafrutillabv@gmail.com</a></li>
                     </ul>
                 </div>
             </div>
@@ -246,66 +246,258 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script>
-        
-async function loadProductores() {
-    try {
-        const response = await fetch('/.netlify/functions/get-productores');
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-        const productores = await response.json();
-        const container = document.getElementById('productores-container');
-        
-        if (productores && productores.length > 0) {
-            container.innerHTML = productores.map((productor) => {
-                const imageUrl = productor.imagen_url || 'https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=800&h=400&fit=crop';
-                const productorUrl = `productor-detail.html?id=${productor.id}`;
-                
-                return `
-                    <div class="blog-card">
-                        <img src="${imageUrl}" alt="${productor.nombre}" class="blog-image">
-                        <div class="blog-content">
-                            <h3 class="blog-title">${productor.nombre}</h3>
-                            <p class="blog-excerpt">${productor.descripcion ? productor.descripcion.substring(0, 120) + '...' : 'Sin descripción disponible'}</p>
-                            <div style="margin-bottom: 15px;">
-                                <strong>Productos:</strong> ${productor.productos || 'No especificado'}
-                            </div>
-                            <div style="margin-bottom: 15px;">
-                                <strong>Ubicación:</strong> ${productor.ubicacion || 'No especificada'}
-                            </div>
-                            <a href="${productorUrl}" class="read-more">Ver Productor</a>
-                            <div class="blog-meta">
-                                <span class="blog-author">Contacto: ${productor.contacto}</span>
-                                <span class="blog-date">${productor.fecha_registro ? new Date(productor.fecha_registro).toLocaleDateString('es-ES') : 'Fecha no disponible'}</span>
+
+<script>
+    async function loadProductores() {
+        try {
+            const response = await fetch('/.netlify/functions/get-productores');
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            
+            const productores = await response.json();
+            const container = document.getElementById('productores-container');
+            
+            if (productores && productores.length > 0) {
+                container.innerHTML = productores.map((productor) => {
+                    const imageUrl = productor.imagen_url || 'https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=800&h=400&fit=crop';
+                    
+                    return `
+                        <div class="blog-card">
+                            <img src="${imageUrl}" alt="${productor.nombre}" class="blog-image">
+                            <div class="blog-content">
+                                <h3 class="blog-title">${productor.nombre}</h3>
+                                <p class="blog-excerpt">${productor.descripcion ? productor.descripcion.substring(0, 120) + '...' : 'Sin descripción disponible'}</p>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Productos:</strong> ${productor.productos || 'No especificado'}
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Ubicación:</strong> ${productor.ubicacion || 'No especificada'}
+                                </div>
+                                <button class="read-more" onclick="showProductorDetail(${productor.id})">Ver Productor</button>
+                                <div class="blog-meta">
+                                    <span class="blog-author">Contacto: ${productor.contacto}</span>
+                                    <span class="blog-date">${productor.fecha_registro ? new Date(productor.fecha_registro).toLocaleDateString('es-ES') : 'Fecha no disponible'}</span>
+                                </div>
                             </div>
                         </div>
+                        
+                        <!-- Modal para mostrar detalles del productor -->
+                        <div id="productor-modal-${productor.id}" class="productor-modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close-btn" onclick="closeProductorModal(${productor.id})">&times;</span>
+                                <img src="${imageUrl}" alt="${productor.nombre}" class="modal-image">
+                                <h2>${productor.nombre}</h2>
+                                <div class="modal-details">
+                                    <div class="detail-item">
+                                        <strong>Descripción:</strong>
+                                        <p>${productor.descripcion || 'No hay descripción disponible.'}</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Productos que ofrece:</strong>
+                                        <p>${productor.productos || 'No especificado'}</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Ubicación:</strong>
+                                        <p>${productor.ubicacion || 'No especificada'}</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Información de contacto:</strong>
+                                        <p>${productor.contacto || 'No disponible'}</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Fecha de registro:</strong>
+                                        <p>${productor.fecha_registro ? new Date(productor.fecha_registro).toLocaleDateString('es-ES') : 'No disponible'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="blog-card" style="text-align: center; padding: 40px;">
+                        <h3 style="color: #718096; margin-bottom: 15px;">No hay productores registrados</h3>
+                        <p style="color: #a0aec0;">Pronto publicaremos información de nuestros productores locales</p>
                     </div>
                 `;
-            }).join('');
-        } else {
+            }
+        } catch (error) {
+            console.error('Error cargando productores:', error);
+            const container = document.getElementById('productores-container');
             container.innerHTML = `
                 <div class="blog-card" style="text-align: center; padding: 40px;">
-                    <h3 style="color: #718096; margin-bottom: 15px;">No hay productores registrados</h3>
-                    <p style="color: #a0aec0;">Pronto publicaremos información de nuestros productores locales</p>
+                    <h3 style="color: #718096; margin-bottom: 15px;">Error cargando productores</h3>
+                    <p style="color: #a0aec0;">Intenta recargar la página</p>
                 </div>
             `;
         }
-    } catch (error) {
-        console.error('Error cargando productores:', error);
-        const container = document.getElementById('productores-container');
-        container.innerHTML = `
-            <div class="blog-card" style="text-align: center; padding: 40px;">
-                <h3 style="color: #718096; margin-bottom: 15px;">Error cargando productores</h3>
-                <p style="color: #a0aec0;">Intenta recargar la página</p>
-            </div>
-        `;
     }
-}
 
-        document.addEventListener('DOMContentLoaded', loadProductores);
-    </script>
+    // Funciones para mostrar/ocultar el modal de productores
+    function showProductorDetail(productorId) {
+        const modal = document.getElementById(`productor-modal-${productorId}`);
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeProductorModal(productorId) {
+        const modal = document.getElementById(`productor-modal-${productorId}`);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Cerrar modal al hacer clic fuera del contenido
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('productor-modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', loadProductores);
+</script>
+
+<!-- Agregar estos estilos CSS al <style> existente en productores.html -->
+<style>
+    .productor-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 15px;
+        max-width: 700px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 2rem;
+        color: #666;
+        cursor: pointer;
+        z-index: 1001;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+    }
+
+    .close-btn:hover {
+        color: #333;
+        background: white;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .modal-content h2 {
+        padding: 20px 30px 10px;
+        color: #2d3748;
+        font-size: 1.8rem;
+        margin: 0;
+        border-bottom: 2px solid #48bb78;
+        padding-bottom: 15px;
+    }
+
+    .modal-details {
+        padding: 0 30px 30px;
+    }
+
+    .detail-item {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .detail-item strong {
+        color: #2d3748;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .detail-item p {
+        color: #4a5568;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .read-more {
+        display: inline-block;
+        background: #48bb78;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s ease;
+        margin-top: 15px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    .read-more:hover {
+        background: #38a169;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            margin: 10px;
+            max-height: 95vh;
+        }
+        
+        .modal-image {
+            height: 200px;
+        }
+        
+        .modal-content h2 {
+            padding: 15px 20px 10px;
+            font-size: 1.5rem;
+        }
+        
+        .modal-details {
+            padding: 0 20px 20px;
+        }
+    }
+</style>
 </body>
 </html>
