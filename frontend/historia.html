@@ -218,52 +218,57 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
         // Función para cargar historias
-        async function loadHistorias() {
-            try {
-                const response = await fetch('/.netlify/functions/get-historias');
-                const historias = await response.json();
+      // Reemplazar esta parte del script en historia.html
+async function loadHistorias() {
+    try {
+        const response = await fetch('/.netlify/functions/get-historias');
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const historias = await response.json();
+        const container = document.getElementById('historia-container');
+        
+        if (historias && historias.length > 0) {
+            container.innerHTML = historias.map((historia) => {
+                const imageUrl = historia.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
+                const historiaUrl = `historia-detail.html?id=${historia.id}`;
                 
-                const container = document.getElementById('historia-container');
-                
-                if (historias && historias.length > 0) {
-                    container.innerHTML = historias.map((historia, index) => {
-                        const imageUrl = historia.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
-                        const historiaUrl = `historia-detail.html?id=${historia.id}`;
-                        
-                        return `
-                            <div class="blog-card">
-                                <img src="${imageUrl}" alt="${historia.titulo}" class="blog-image">
-                                <div class="blog-content">
-                                    <h3 class="blog-title">${historia.titulo}</h3>
-                                    <p class="blog-excerpt">${historia.contenido.substring(0, 120)}...</p>
-                                    <a href="${historiaUrl}" class="read-more">Leer más</a>
-                                    <div class="blog-meta">
-                                        <span class="blog-author">Por: ${historia.autor}</span>
-                                        <span class="blog-date">${new Date(historia.fecha_publicacion).toLocaleDateString('es-ES')}</span>
-                                    </div>
-                                </div>
+                return `
+                    <div class="blog-card">
+                        <img src="${imageUrl}" alt="${historia.titulo}" class="blog-image">
+                        <div class="blog-content">
+                            <h3 class="blog-title">${historia.titulo}</h3>
+                            <p class="blog-excerpt">${historia.contenido ? historia.contenido.substring(0, 120) + '...' : 'Sin contenido disponible'}</p>
+                            <a href="${historiaUrl}" class="read-more">Leer más</a>
+                            <div class="blog-meta">
+                                <span class="blog-author">Por: ${historia.autor}</span>
+                                <span class="blog-date">${historia.fecha_publicacion ? new Date(historia.fecha_publicacion).toLocaleDateString('es-ES') : 'Fecha no disponible'}</span>
                             </div>
-                        `;
-                    }).join('');
-                } else {
-                    container.innerHTML = `
-                        <div class="blog-card" style="text-align: center; padding: 40px;">
-                            <h3 style="color: #718096; margin-bottom: 15px;">No hay historias publicadas</h3>
-                            <p style="color: #a0aec0;">Pronto publicaremos contenido histórico sobre la Fiesta de la Frutilla</p>
                         </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error cargando historias:', error);
-                container.innerHTML = `
-                    <div class="blog-card" style="text-align: center; padding: 40px;">
-                        <h3 style="color: #718096; margin-bottom: 15px;">Error cargando historias</h3>
-                        <p style="color: #a0aec0;">Intenta recargar la página</p>
                     </div>
                 `;
-            }
+            }).join('');
+        } else {
+            container.innerHTML = `
+                <div class="blog-card" style="text-align: center; padding: 40px;">
+                    <h3 style="color: #718096; margin-bottom: 15px;">No hay historias publicadas</h3>
+                    <p style="color: #a0aec0;">Pronto publicaremos contenido histórico sobre la Fiesta de la Frutilla</p>
+                </div>
+            `;
         }
-
+    } catch (error) {
+        console.error('Error cargando historias:', error);
+        const container = document.getElementById('historia-container');
+        container.innerHTML = `
+            <div class="blog-card" style="text-align: center; padding: 40px;">
+                <h3 style="color: #718096; margin-bottom: 15px;">Error cargando historias</h3>
+                <p style="color: #a0aec0;">Intenta recargar la página</p>
+            </div>
+        `;
+    }
+}
         document.addEventListener('DOMContentLoaded', loadHistorias);
     </script>
 </body>

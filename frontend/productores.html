@@ -255,52 +255,63 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
-        // Función para cargar productores
-        async function loadProductores() {
-            try {
-                const response = await fetch('/.netlify/functions/get-productores');
-                const productores = await response.json();
+        
+async function loadProductores() {
+    try {
+        const response = await fetch('/.netlify/functions/get-productores');
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const productores = await response.json();
+        const container = document.getElementById('productores-container');
+        
+        if (productores && productores.length > 0) {
+            container.innerHTML = productores.map((productor) => {
+                const imageUrl = productor.imagen_url || 'https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=800&h=400&fit=crop';
+                const productorUrl = `productor-detail.html?id=${productor.id}`;
                 
-                const container = document.getElementById('productores-container');
-                
-                if (productores && productores.length > 0) {
-                    container.innerHTML = productores.map((productor, index) => {
-                        const imageUrl = productor.imagen_url || 'https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=800&h=400&fit=crop';
-                        const productorUrl = `productor-detail.html?id=${productor.id}`;
-                        
-                        return `
-                            <div class="blog-card">
-                                <img src="${imageUrl}" alt="${productor.titulo}" class="blog-image">
-                                <div class="blog-content">
-                                    <h3 class="blog-title">${productor.titulo}</h3>
-                                    <p class="blog-excerpt">${productor.contenido.substring(0, 120)}...</p>
-                                    <a href="${productorUrl}" class="read-more">Ver Productor</a>
-                                    <div class="blog-meta">
-                                        <span class="blog-author">Contacto: ${productor.autor}</span>
-                                        <span class="blog-date">${new Date(productor.fecha_publicacion).toLocaleDateString('es-ES')}</span>
-                                    </div>
-                                </div>
+                return `
+                    <div class="blog-card">
+                        <img src="${imageUrl}" alt="${productor.nombre}" class="blog-image">
+                        <div class="blog-content">
+                            <h3 class="blog-title">${productor.nombre}</h3>
+                            <p class="blog-excerpt">${productor.descripcion ? productor.descripcion.substring(0, 120) + '...' : 'Sin descripción disponible'}</p>
+                            <div style="margin-bottom: 15px;">
+                                <strong>Productos:</strong> ${productor.productos || 'No especificado'}
                             </div>
-                        `;
-                    }).join('');
-                } else {
-                    container.innerHTML = `
-                        <div class="blog-card" style="text-align: center; padding: 40px;">
-                            <h3 style="color: #718096; margin-bottom: 15px;">No hay productores registrados</h3>
-                            <p style="color: #a0aec0;">Pronto publicaremos información de nuestros productores locales</p>
+                            <div style="margin-bottom: 15px;">
+                                <strong>Ubicación:</strong> ${productor.ubicacion || 'No especificada'}
+                            </div>
+                            <a href="${productorUrl}" class="read-more">Ver Productor</a>
+                            <div class="blog-meta">
+                                <span class="blog-author">Contacto: ${productor.contacto}</span>
+                                <span class="blog-date">${productor.fecha_registro ? new Date(productor.fecha_registro).toLocaleDateString('es-ES') : 'Fecha no disponible'}</span>
+                            </div>
                         </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error cargando productores:', error);
-                container.innerHTML = `
-                    <div class="blog-card" style="text-align: center; padding: 40px;">
-                        <h3 style="color: #718096; margin-bottom: 15px;">Error cargando productores</h3>
-                        <p style="color: #a0aec0;">Intenta recargar la página</p>
                     </div>
                 `;
-            }
+            }).join('');
+        } else {
+            container.innerHTML = `
+                <div class="blog-card" style="text-align: center; padding: 40px;">
+                    <h3 style="color: #718096; margin-bottom: 15px;">No hay productores registrados</h3>
+                    <p style="color: #a0aec0;">Pronto publicaremos información de nuestros productores locales</p>
+                </div>
+            `;
         }
+    } catch (error) {
+        console.error('Error cargando productores:', error);
+        const container = document.getElementById('productores-container');
+        container.innerHTML = `
+            <div class="blog-card" style="text-align: center; padding: 40px;">
+                <h3 style="color: #718096; margin-bottom: 15px;">Error cargando productores</h3>
+                <p style="color: #a0aec0;">Intenta recargar la página</p>
+            </div>
+        `;
+    }
+}
 
         document.addEventListener('DOMContentLoaded', loadProductores);
     </script>
