@@ -230,6 +230,7 @@
                 const container = document.getElementById('historia-container');
                 
                 if (historias && historias.length > 0) {
+                    // Generar solo las tarjetas en el container
                     container.innerHTML = historias.map((historia) => {
                         const imageUrl = historia.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
                         
@@ -246,8 +247,14 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Modal para mostrar detalles -->
+                        `;
+                    }).join('');
+                    
+                    // Generar los modales fuera del container, al final del body
+                    const modalsHTML = historias.map((historia) => {
+                        const imageUrl = historia.imagen_url || 'https://images.unsplash.com/photo-1519996529934-ea4d5f6c055c?w=800&h=400&fit=crop';
+                        
+                        return `
                             <div id="historia-modal-${historia.id}" class="historia-modal" style="display: none;">
                                 <div class="modal-content">
                                     <span class="close-btn" onclick="closeHistoriaModal(${historia.id})">&times;</span>
@@ -264,6 +271,10 @@
                             </div>
                         `;
                     }).join('');
+                    
+                    // Insertar los modales al final del body
+                    document.body.insertAdjacentHTML('beforeend', modalsHTML);
+                    
                 } else {
                     container.innerHTML = `
                         <div class="blog-card" style="text-align: center; padding: 40px;">
@@ -288,7 +299,7 @@
         function showHistoriaDetail(historiaId) {
             const modal = document.getElementById(`historia-modal-${historiaId}`);
             if (modal) {
-                modal.style.display = 'block';
+                modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
             }
         }
@@ -302,13 +313,11 @@
         }
     
         // Cerrar modal al hacer clic fuera del contenido
-        document.addEventListener('DOMContentLoaded', function() {
-            document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('historia-modal')) {
-                    event.target.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('historia-modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
         });
     
         document.addEventListener('DOMContentLoaded', loadHistorias);
