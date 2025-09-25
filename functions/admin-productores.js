@@ -1,17 +1,36 @@
 const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
-
 exports.handler = async (event, context) => {
-  // Verificar autenticación
-  const token = event.headers.authorization?.replace('Bearer ', '');
-  if (!token || token !== process.env.ADMIN_TOKEN) {
-    return { statusCode: 401, body: JSON.stringify({ error: 'No autorizado' }) };
+  // Configurar CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
   }
+
+  // Verificar autenticación con JWT
+  const authHeader = event.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'No autorizado' }) };
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    jwt.verify(token, process.env.ADMIN_SECRET || 'fallback-secret');
+  } catch (error) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Token inválido' }) };
+  }
+
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  });
 
   try {
     // GET - Obtener productores
@@ -21,6 +40,7 @@ exports.handler = async (event, context) => {
       );
       return {
         statusCode: 200,
+        headers,
         body: JSON.stringify(result.rows)
       };
     }
@@ -36,6 +56,7 @@ exports.handler = async (event, context) => {
       
       return {
         statusCode: 200,
+        headers,
         body: JSON.stringify(result.rows[0])
       };
     }
@@ -47,12 +68,20 @@ exports.handler = async (event, context) => {
       
       return {
         statusCode: 200,
+        headers,
         body: JSON.stringify({ success: true })
       };
     }
 
-    return { statusCode: 405, body: JSON.stringify({ error: 'Método no permitido' }) };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Método no permitido' }) };
   } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    console.error('Error en productores:', error);
+    return { 
+      statusCode: 500, 
+      headers,
+      body: JSON.stringify({ error: 'Error interno del servidor' }) 
+    };
+  } finally {
+    await pool.end();
   }
 };
