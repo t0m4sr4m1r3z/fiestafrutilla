@@ -24,14 +24,13 @@ exports.handler = async (event, context) => {
 
   try {
     const result = await pool.query(
-      'SELECT * FROM productores WHERE estado = $1 OR estado IS NULL ORDER BY fecha_registro DESC',
-      ['activo']
+        'SELECT * FROM productores ORDER BY fecha_registro DESC'
     );
 
     return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(result.rows)
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(result.rows)
     };
   } catch (error) {
     console.error('Error obteniendo productores:', error);
