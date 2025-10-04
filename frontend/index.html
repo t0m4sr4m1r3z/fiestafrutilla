@@ -1,3 +1,5 @@
+[file name]: index.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,6 +8,132 @@
     <title>Fiesta Provincial de la Frutilla - Desmochado, Corrientes</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Estilos para la cuenta regresiva */
+        .countdown-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #d32f2f 0%, #388e3c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 999;
+            text-align: center;
+            min-width: 200px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            animation: pulse 2s infinite;
+        }
+
+        .countdown-title {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+        }
+
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Estilos para la sección de transmisión en vivo */
+        .live-stream-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .live-stream-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .live-stream-placeholder {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 30px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed rgba(255,255,255,0.3);
+        }
+
+        .live-icon {
+            font-size: 3rem;
+            color: #ff4757;
+            margin-bottom: 20px;
+            animation: livePulse 1.5s infinite;
+        }
+
+        @keyframes livePulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .live-stream-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stream-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #4267B2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .stream-btn.instagram {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+        }
+
+        .stream-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Resto de estilos existentes... */
         .notification {
             position: fixed;
             top: 20px;
@@ -209,6 +337,15 @@
             .blog-content {
                 padding: 20px;
             }
+
+            .countdown-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 20px auto;
+                width: 90%;
+                max-width: 300px;
+            }
         }
 
         /* Efecto de carga */
@@ -266,6 +403,29 @@
 </head>
 
 <body>
+    <!-- Cuenta Regresiva Flotante -->
+    <div class="countdown-container">
+        <div class="countdown-title">Fiesta de la Frutilla</div>
+        <div class="countdown-timer" id="countdown-timer">
+            <div class="countdown-unit">
+                <div class="countdown-value" id="days">00</div>
+                <div class="countdown-label">Días</div>
+            </div>
+            <div class="countdown-unit">
+                <div class="countdown-value" id="hours">00</div>
+                <div class="countdown-label">Horas</div>
+            </div>
+            <div class="countdown-unit">
+                <div class="countdown-value" id="minutes">00</div>
+                <div class="countdown-label">Min</div>
+            </div>
+            <div class="countdown-unit">
+                <div class="countdown-value" id="seconds">00</div>
+                <div class="countdown-label">Seg</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header>
         <div class="container header-content">
@@ -328,6 +488,29 @@
                         <li><strong>Desarrollo turístico:</strong> El evento atrae visitantes y ayuda a promocionar Bella Vista y Desmochado como destinos turísticos.</li>
                         <li><strong>Cultura e identidad:</strong> La fiesta refuerza la identidad cultural de la zona, conectando a la comunidad con sus tradiciones productivas.</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Transmisión en Vivo -->
+    <section class="live-stream-section">
+        <div class="live-stream-container">
+            <div class="section-title">
+                <h2 style="color: white;">Transmisión en Vivo</h2>
+                <p style="color: rgba(255,255,255,0.8);">No te pierdas la Fiesta de la Frutilla en vivo desde Desmochado</p>
+            </div>
+            <div class="live-stream-placeholder">
+                <i class="fas fa-broadcast-tower live-icon"></i>
+                <h3>Próximamente: Transmisión en Vivo</h3>
+                <p>Durante el evento podrás seguir la transmisión en vivo desde nuestras redes sociales</p>
+                <div class="live-stream-buttons">
+                    <a href="https://facebook.com/fiestafrutilladesmochado" target="_blank" class="stream-btn">
+                        <i class="fab fa-facebook-f"></i> Ver en Facebook
+                    </a>
+                    <a href="https://instagram.com/fiestafrutilladesmochado" target="_blank" class="stream-btn instagram">
+                        <i class="fab fa-instagram"></i> Ver en Instagram
+                    </a>
                 </div>
             </div>
         </div>
@@ -414,10 +597,8 @@
                     <h3>Fiesta de la Frutilla</h3>
                     <p>Celebrando las tradiciones y la producción de frutillas de Desmochado, Corrientes, Argentina.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="https://facebook.com/fiestafrutilladesmochado" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/fiestafrutilladesmochado" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="footer-column">
@@ -450,6 +631,32 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
+        // Cuenta regresiva para el 10 de octubre
+        function updateCountdown() {
+            const targetDate = new Date('October 10, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+            
+            if (timeLeft < 0) {
+                document.getElementById('countdown-timer').innerHTML = '<div style="font-size: 1rem; font-weight: 600;">¡La Fiesta está en curso!</div>';
+                return;
+            }
+            
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // Actualizar la cuenta regresiva cada segundo
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
         // URL de tu backend
         const API_URL = 'https://fiesta-frutilla-backend.onrender.com';
 

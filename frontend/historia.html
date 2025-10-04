@@ -6,6 +6,73 @@
     <title>Historia - Fiesta de la Frutilla</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Estilos para la cuenta regresiva */
+        .countdown-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #d32f2f 0%, #388e3c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 999;
+            text-align: center;
+            min-width: 200px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            animation: pulse 2s infinite;
+        }
+
+        .countdown-title {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+        }
+
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .countdown-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 20px auto;
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+
+        /* Resto de estilos existentes... */
         .blogs-section {
             padding: 60px 0;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -134,6 +201,29 @@
     </style>
 </head>
 <body>
+    <!-- Cuenta Regresiva Flotante -->
+    <div class="countdown-container">
+        <div class="countdown-title">Fiesta de la Frutilla</div>
+        <div class="countdown-timer" id="countdown-timer">
+            <div class="countdown-unit">
+                <div class="countdown-value" id="days">00</div>
+                <div class="countdown-label">Días</div>
+            </div>
+            <div class="countdown-unit">
+                <div class="countdown-value" id="hours">00</div>
+                <div class="countdown-label">Horas</div>
+            </div>
+            <div class="countdown-unit">
+                <div class="countdown-value" id="minutes">00</div>
+                <div class="countdown-label">Min</div>
+            </div>
+            <div class="countdown-unit">
+                <div class="countdown-value" id="seconds">00</div>
+                <div class="countdown-label">Seg</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header>
         <div class="container header-content">
@@ -183,10 +273,8 @@
                     <h3>Fiesta de la Frutilla</h3>
                     <p>Celebrando las tradiciones y la producción de frutillas de Desmochado, Corrientes, Argentina.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="https://facebook.com/fiestafrutilladesmochado" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/fiestafrutilladesmochado" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="footer-column">
@@ -216,6 +304,32 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
+        // Cuenta regresiva para el 10 de octubre
+        function updateCountdown() {
+            const targetDate = new Date('October 10, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+            
+            if (timeLeft < 0) {
+                document.getElementById('countdown-timer').innerHTML = '<div style="font-size: 1rem; font-weight: 600;">¡La Fiesta está en curso!</div>';
+                return;
+            }
+            
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // Actualizar la cuenta regresiva cada segundo
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
         // Función para cargar historias
         async function loadHistorias() {
             try {
